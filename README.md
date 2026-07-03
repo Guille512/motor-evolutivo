@@ -1,8 +1,21 @@
 # Motor Evolutivo 🧬
 
+[![License: MIT](https://img.shields.io/github/license/Guille512/motor-evolutivo?style=flat-square)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/Guille512/motor-evolutivo?style=flat-square)](https://github.com/Guille512/motor-evolutivo)
+[![Protocol](https://img.shields.io/badge/protocol-markdown--only-blue?style=flat-square)]()
+[![Made with Claude Code](https://img.shields.io/badge/made%20with-Claude%20Code-CC785C?style=flat-square)](https://claude.com/claude-code)
+
 **Un prompt maestro que se mejora a sí mismo con evidencia real — sin reentrenar nada, sin infraestructura, sin datasets.**
 
 > **EN — TL;DR:** A GEPA-style, human-in-the-loop protocol for self-improving prompts that runs *inside* your Claude Code (or any LLM agent) sessions. No Python, no pipelines, no eval datasets — just markdown files, a logbook, and a weekly supervised mutation cycle. Battle-tested on 3 production clients: 9 approved mutations in 3 weeks, including the metric catching its own saturation bug. Spanish-first docs; the protocol is language-agnostic.
+
+![Demo del ciclo del Motor Evolutivo](docs/demo.png)
+
+> 🖥️ **Funciona en cualquier terminal, con cualquier agente LLM.** El núcleo es
+> markdown puro — no depende de Claude Code. Corre igual con Cursor, Windsurf,
+> aider, Gemini CLI, Copilot Chat, o pegando el prompt directo en cualquier chat
+> web. Claude Code es la ÚNICA parte opcional (una skill que automatiza el
+> ciclo) — si no lo usás, el protocolo funciona exactamente igual a mano.
 
 ---
 
@@ -64,17 +77,20 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
 
-## Quickstart (5 minutos)
+## Quickstart (5 minutos, cualquier terminal)
+
+Ningún paso de acá abajo requiere Claude Code — son archivos de texto que pegás
+en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
 2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** tu agente corre el prompt maestro → te da máx. 3 propuestas con las reglas R1-R7 aplicadas.
-4. **Al cerrar el tramo:** corré la reflexión-de-cierre (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
+3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R7 aplicadas.
+4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
 5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
 
-**Opcionales:**
-- **Claude Code:** instalá [`skill/SKILL.md`](skill/SKILL.md) en `~/.claude/skills/motor-evolutivo/` — el ciclo completo se opera diciendo "motor".
-- **Sensores 0-token:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) mide solo el resultado de las propuestas aplicadas (vía API de tu stack) y te avisa por Telegram. Corre por cron/Task Scheduler, sin gastar tokens.
+**Opcional — solo si usás Claude Code:**
+- Instalá [`skill/SKILL.md`](skill/SKILL.md) en `~/.claude/skills/motor-evolutivo/` — el ciclo completo (pasos 3-5) se opera diciendo "motor", sin copiar/pegar nada a mano.
+- **Sensores 0-token:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) es Node.js puro — corre en cualquier terminal (no solo Claude Code) por cron/Task Scheduler, mide el resultado de las propuestas aplicadas (vía API de tu stack) y avisa por Telegram, sin gastar tokens de ningún LLM.
 
 ## Estructura del repo
 
