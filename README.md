@@ -1,0 +1,106 @@
+# Motor Evolutivo 🧬
+
+**Un prompt maestro que se mejora a sí mismo con evidencia real — sin reentrenar nada, sin infraestructura, sin datasets.**
+
+> **EN — TL;DR:** A GEPA-style, human-in-the-loop protocol for self-improving prompts that runs *inside* your Claude Code (or any LLM agent) sessions. No Python, no pipelines, no eval datasets — just markdown files, a logbook, and a weekly supervised mutation cycle. Battle-tested on 3 production clients: 9 approved mutations in 3 weeks, including the metric catching its own saturation bug. Spanish-first docs; the protocol is language-agnostic.
+
+---
+
+## ¿Qué es?
+
+La mayoría de los frameworks de auto-mejora de prompts ([GEPA](https://github.com/gepa-ai/gepa), DSPy) son **librerías de código**: necesitás Python, datasets de evaluación y un pipeline de optimización.
+
+El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu agente LLM en un sistema que aprende de sus propias sesiones de trabajo reales. Sin código obligatorio. Los principios son los mismos que GEPA (reflexión en lenguaje natural > reward numérico), pero el "dataset" son tus sesiones reales y el "optimizador" es un ciclo de reflexión supervisado.
+
+```
+  apertura de sesión                cierre de tramo
+       │                                  │
+       ▼                                  ▼
+ radar-contexto ──► PROMPT MAESTRO ──► humano elige ──► reflexión-de-cierre
+       ▲                  │                                    │
+       │            filtro-novedad                      append a bitácora
+       │                                                       │
+       └──────────── consolidador ◄──── mutador-de-prompt ◄────┘
+                    (cada ~5 usos)      (semanal, con OK humano)
+```
+
+**El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
+
+## Las 7 reglas (el corazón)
+
+| Regla | Qué hace | De qué error real nació |
+|-------|----------|------------------------|
+| **R1 NOVEDAD** | Prohibido repetir lo ya hecho, rechazado o ignorado 2 veces | Jugadas recicladas sesión tras sesión |
+| **R2 ORDEN** | Propuesta #1 = siempre el dolor más concreto (error en logs, no idea linda) | Propuestas "interesantes" que ignoraban lo que estaba roto |
+| **R3 CURIOSIDAD** | Al menos 1 propuesta 🧪 en dirección no explorada | Convergencia prematura (principio Pareto de GEPA) |
+| **R4 FUNDAMENTO** | Cada propuesta cita su fuente: histórico / presente / roadmap | Propuestas sin ancla verificable |
+| **R5 SUPERVISIÓN** | Proponer, NUNCA ejecutar producción solo | Un incidente de producción real |
+| **R6 REVALIDAR** | Al afirmar "X está roto/sano", pegar la evidencia (log, timestamp) EN la misma frase | 11+ afirmaciones sin verificar encontradas en bitácora |
+| **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad | Propuestas de arreglos fantasma sobre memoria desactualizada |
+
+Ninguna regla salió de la teoría. **Todas son cicatrices**: cada una tiene la fecha y el error que la generó en el changelog.
+
+## La métrica (v1.3 — anti-saturación + self-correction)
+
+Cada cierre de tramo registra en la bitácora qué propuesta se eligió:
+
+| Score | Significado |
+|-------|-------------|
+| **1.0** | Elegida tal como se propuso |
+| **0.5** | Absorbida / reformulada por el humano |
+| **0.5★** | **AUTO-CORREGIDA**: R7 anuló la propuesta por premisa falsa ANTES de tocar prod. Señal POSITIVA — el motor cazó su propia mala jugada |
+| **0** | Ignorada o rechazada estando bien fundada |
+
+Dos protecciones que aprendimos a los golpes:
+- **Prohibido contar absorbidas como elegidas** — eso infló nuestra curva a un 93% falso y la dejó sin señal.
+- **Toda entrada nombra la propuesta más floja** — una bitácora donde todo sale bien no enseña nada.
+
+## Resultados reales (no benchmark — producción)
+
+Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
+
+- **9 mutaciones aprobadas** del prompt maestro (v1.0 → v2.0a) en ~3 semanas, cada una fundada en ejecuciones reales.
+- **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
+- **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
+- **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
+
+## Quickstart (5 minutos)
+
+1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
+2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
+3. **Al abrir sesión de trabajo:** tu agente corre el prompt maestro → te da máx. 3 propuestas con las reglas R1-R7 aplicadas.
+4. **Al cerrar el tramo:** corré la reflexión-de-cierre (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
+5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
+
+**Opcionales:**
+- **Claude Code:** instalá [`skill/SKILL.md`](skill/SKILL.md) en `~/.claude/skills/motor-evolutivo/` — el ciclo completo se opera diciendo "motor".
+- **Sensores 0-token:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) mide solo el resultado de las propuestas aplicadas (vía API de tu stack) y te avisa por Telegram. Corre por cron/Task Scheduler, sin gastar tokens.
+
+## Estructura del repo
+
+```
+├── prompts/motor-evolutivo-template.md   ← EL prompt maestro (plantilla genérica)
+├── skill/SKILL.md                        ← operador del ciclo para Claude Code
+├── scripts/watch-sensores.js             ← score-collector 0-token (opcional)
+├── examples/bitacora-ejemplo.md          ← bitácora con entradas de ejemplo
+└── docs/arquitectura-autonomia.md        ← el plan v2.0 completo (qué automatizar y qué NO)
+```
+
+## Cuándo NO usarlo
+
+- Si querés optimización automática masiva contra un dataset → usá [GEPA](https://github.com/gepa-ai/gepa) directo, es para eso.
+- Si nadie va a hacer la reflexión de cierre → sin ese paso el motor NO evoluciona; es un prompt estático con otro nombre.
+- Si querés que el agente ejecute producción sin supervisión → este protocolo es explícitamente lo contrario (R5). La señal de aprendizaje ES la decisión humana; sacala y el motor se puntúa solo (ya vimos cómo termina: curva inflada sin información).
+
+## Fundamento
+
+| Principio | Fuente |
+|-----------|--------|
+| La reflexión en lenguaje natural supera al reward numérico | [GEPA — ICLR 2026](https://github.com/gepa-ai/gepa) |
+| Try → Reflect → Consolidate sin reentrenar | ACE (Agentic Context Engineering) |
+| Árbol de candidatos, no convergencia prematura | GEPA (selección Pareto) |
+| El prompt como proceso revisable, versionado en git | Survey de memoria de agentes 2026 |
+
+## Licencia
+
+MIT — [Guillermo Fernández](https://github.com/Guille512). Si lo usás y el motor te enseña algo, contá la cicatriz en un issue: las reglas de otros son el mejor changelog.
