@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this protocol (the R1-R7 rules, the v1.3 metric, or the bounded-autonomy sensor pattern), please cite it as below."
+title: "Motor Evolutivo: a markdown protocol for self-improving LLM prompts"
+authors:
+  - family-names: "Fernández"
+    given-names: "Guillermo"
+repository-code: "https://github.com/Guille512/motor-evolutivo"
+url: "https://github.com/Guille512/motor-evolutivo"
+license: MIT
+date-released: 2026-07-03
