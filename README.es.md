@@ -128,6 +128,13 @@ el origen:
 
 > Motor Evolutivo — Guillermo Fernández, 2026. https://github.com/Guille512/motor-evolutivo
 
+## Privacidad y seguridad
+
+Sin telemetría, sin cuenta, sin API key para el protocolo core — es markdown
+que pegás en tu propio agente. El único script opcional solo llama a las
+APIs que VOS configurás, nunca manda datos a ningún lado. Política completa
+(en inglés): [SECURITY.md](SECURITY.md).
+
 ## Licencia
 
 MIT — [Guillermo Fernández](https://github.com/Guille512). Si lo usás y el motor te enseña algo, contá la cicatriz en un issue: las reglas de otros son el mejor changelog.

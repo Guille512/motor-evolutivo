@@ -128,6 +128,12 @@ here is appreciated — it's what keeps this tied to where it came from:
 
 > Motor Evolutivo — Guillermo Fernández, 2026. https://github.com/Guille512/motor-evolutivo
 
+## Privacy & security
+
+No telemetry, no account, no API key needed for the core protocol — it's
+markdown you paste into your own agent. The one optional script only calls
+APIs **you** configure, never phones home. Full policy: [SECURITY.md](SECURITY.md).
+
 ## License
 
 MIT — [Guillermo Fernández](https://github.com/Guille512). If you use it and the engine teaches you something, tell the scar in an issue: other people's rules are the best changelog.
