@@ -77,6 +77,8 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
 
+El trabajo de cliente detrás de estos números tiene NDA, así que la bitácora privada completa no se puede publicar — pero [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) incluye una **entrada real, sanitizada** (detalles identificatorios reemplazados, mecánica y score intactos): un chequeo R7 verify-first que evitó que datos reales de un cliente se filtraran a un asset público, con score 0.5★ (auto-corrección, no una falla).
+
 ## Quickstart (5 minutos, cualquier terminal)
 
 Ningún paso de acá abajo requiere Claude Code — son archivos de texto que pegás

@@ -78,6 +78,8 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
 
+The client work behind these numbers is under NDA, so the full private logbook can't be published — but [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) includes one **real, sanitized entry** (identifying details replaced, mechanics and score untouched): an R7 verify-first check that caught real client data about to leak into a public asset, scored 0.5★ (self-correction, not a failure).
+
 ## Quickstart (5 minutes, any terminal)
 
 Nothing below requires Claude Code — these are plain text files you paste
