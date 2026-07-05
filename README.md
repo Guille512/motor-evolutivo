@@ -1,122 +1,123 @@
 # Motor Evolutivo 🧬
 
+🇪🇸 **[Leer en español](README.es.md)** · 🇬🇧 You're reading the English version
+
 [![License: MIT](https://img.shields.io/github/license/Guille512/motor-evolutivo?style=flat-square)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/Guille512/motor-evolutivo?style=flat-square)](https://github.com/Guille512/motor-evolutivo)
 [![Protocol](https://img.shields.io/badge/protocol-markdown--only-blue?style=flat-square)]()
 [![Made with Claude Code](https://img.shields.io/badge/made%20with-Claude%20Code-CC785C?style=flat-square)](https://claude.com/claude-code)
 
-**Un prompt maestro que se mejora a sí mismo con evidencia real — sin reentrenar nada, sin infraestructura, sin datasets.**
+**A master prompt that improves itself with real evidence — no retraining, no infrastructure, no datasets.**
 
-> **EN — TL;DR:** A GEPA-style, human-in-the-loop protocol for self-improving prompts that runs *inside* your Claude Code (or any LLM agent) sessions. No Python, no pipelines, no eval datasets — just markdown files, a logbook, and a weekly supervised mutation cycle. Battle-tested on 3 production clients: 9 approved mutations in 3 weeks, including the metric catching its own saturation bug. Spanish-first docs; the protocol is language-agnostic.
+![Motor Evolutivo cycle diagram](docs/demo.png)
 
-![Demo del ciclo del Motor Evolutivo](docs/demo.png)
-
-> 🖥️ **Funciona en cualquier terminal, con cualquier agente LLM.** El núcleo es
-> markdown puro — no depende de Claude Code. Corre igual con Cursor, Windsurf,
-> aider, Gemini CLI, Copilot Chat, o pegando el prompt directo en cualquier chat
-> web. Claude Code es la ÚNICA parte opcional (una skill que automatiza el
-> ciclo) — si no lo usás, el protocolo funciona exactamente igual a mano.
+> 🖥️ **Works in any terminal, with any LLM agent.** The core is plain
+> markdown — it doesn't depend on Claude Code. It runs the same way with
+> Cursor, Windsurf, aider, Gemini CLI, Copilot Chat, or by pasting the
+> prompt directly into any web chat. Claude Code is the ONLY optional part
+> (a skill that automates the cycle) — if you don't use it, the protocol
+> works exactly the same by hand.
 
 ---
 
-## ¿Qué es?
+## What is this?
 
-La mayoría de los frameworks de auto-mejora de prompts ([GEPA](https://github.com/gepa-ai/gepa), DSPy) son **librerías de código**: necesitás Python, datasets de evaluación y un pipeline de optimización.
+Most prompt self-improvement frameworks ([GEPA](https://github.com/gepa-ai/gepa), DSPy) are **code libraries**: you need Python, evaluation datasets, and an optimization pipeline.
 
-El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu agente LLM en un sistema que aprende de sus propias sesiones de trabajo reales. Sin código obligatorio. Los principios son los mismos que GEPA (reflexión en lenguaje natural > reward numérico), pero el "dataset" son tus sesiones reales y el "optimizador" es un ciclo de reflexión supervisado.
+Motor Evolutivo is something else: a **markdown protocol** that turns your LLM agent into a system that learns from its own real work sessions. No code required. The principles are the same as GEPA (natural-language reflection beats numeric reward), but the "dataset" is your actual sessions and the "optimizer" is a supervised reflection cycle — the human closing the loop each time, not a rollout harness.
 
 ```
-  apertura de sesión                cierre de tramo
+   session opens                    task chunk closes
        │                                  │
        ▼                                  ▼
- radar-contexto ──► PROMPT MAESTRO ──► humano elige ──► reflexión-de-cierre
-       ▲                  │                                    │
-       │            filtro-novedad                      append a bitácora
-       │                                                       │
-       └──────────── consolidador ◄──── mutador-de-prompt ◄────┘
-                    (cada ~5 usos)      (semanal, con OK humano)
+ context-radar ──► MASTER PROMPT ──► human picks ──► closing-reflection
+       ▲                  │                                │
+       │            novelty-filter                   append to logbook
+       │                                                    │
+       └──────────── consolidator ◄──── prompt-mutator ◄────┘
+                    (every ~5 uses)      (weekly, human-approved)
 ```
 
-**El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
+**The result:** an agent that never proposes the same thing twice, that verifies its assumptions before suggesting a fix, and whose master prompt is measurably better this week than last week — with a git-versioned changelog to prove it.
 
-## Las 7 reglas (el corazón)
+## The 7 rules (the core of it)
 
-| Regla | Qué hace | De qué error real nació |
-|-------|----------|------------------------|
-| **R1 NOVEDAD** | Prohibido repetir lo ya hecho, rechazado o ignorado 2 veces | Jugadas recicladas sesión tras sesión |
-| **R2 ORDEN** | Propuesta #1 = siempre el dolor más concreto (error en logs, no idea linda) | Propuestas "interesantes" que ignoraban lo que estaba roto |
-| **R3 CURIOSIDAD** | Al menos 1 propuesta 🧪 en dirección no explorada | Convergencia prematura (principio Pareto de GEPA) |
-| **R4 FUNDAMENTO** | Cada propuesta cita su fuente: histórico / presente / roadmap | Propuestas sin ancla verificable |
-| **R5 SUPERVISIÓN** | Proponer, NUNCA ejecutar producción solo | Un incidente de producción real |
-| **R6 REVALIDAR** | Al afirmar "X está roto/sano", pegar la evidencia (log, timestamp) EN la misma frase | 11+ afirmaciones sin verificar encontradas en bitácora |
-| **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad | Propuestas de arreglos fantasma sobre memoria desactualizada |
+| Rule | What it does | Which real failure it came from |
+|------|---------------|----------------------------------|
+| **R1 NOVELTY** | Never repeat a move already done, rejected, or ignored twice | Recycled proposals, session after session |
+| **R2 ORDERING** | Proposal #1 is always the most concrete real pain (an actual error in the logs, not a nice idea) | "Interesting" proposals that ignored what was actually broken |
+| **R3 CURIOSITY** | At least 1 proposal 🧪 in an unexplored direction | Premature convergence (GEPA's Pareto principle) |
+| **R4 GROUNDING** | Every proposal cites its source: historical / current / roadmap | Proposals with no verifiable anchor |
+| **R5 SUPERVISION** | Propose, NEVER execute production alone | A real production incident |
+| **R6 REVALIDATE** | When claiming "X is broken/healthy," paste the evidence (log, timestamp) IN the same sentence | 11+ unverified claims found in the logbook |
+| **R7 VERIFY-BEFORE-PROPOSING** | Before proposing "fix X," verify X is actually broken | Phantom-fix proposals based on stale memory |
 
-Ninguna regla salió de la teoría. **Todas son cicatrices**: cada una tiene la fecha y el error que la generó en el changelog.
+None of these rules came from theory. **They're all scars** — each one has the date and the failure that caused it in the changelog.
 
-## La métrica (v1.3 — anti-saturación + self-correction)
+## The metric (v1.3 — anti-saturation + self-correction)
 
-Cada cierre de tramo registra en la bitácora qué propuesta se eligió:
+Every closed task chunk logs which proposal was picked:
 
-| Score | Significado |
-|-------|-------------|
-| **1.0** | Elegida tal como se propuso |
-| **0.5** | Absorbida / reformulada por el humano |
-| **0.5★** | **AUTO-CORREGIDA**: R7 anuló la propuesta por premisa falsa ANTES de tocar prod. Señal POSITIVA — el motor cazó su propia mala jugada |
-| **0** | Ignorada o rechazada estando bien fundada |
+| Score | Meaning |
+|-------|---------|
+| **1.0** | Chosen exactly as proposed |
+| **0.5** | Absorbed / reworded by the human |
+| **0.5★** | **SELF-CORRECTED**: R7 nulled the proposal on a false premise BEFORE touching prod. A POSITIVE signal — the engine caught its own bad move |
+| **0** | Ignored or rejected while well-founded |
 
-Dos protecciones que aprendimos a los golpes:
-- **Prohibido contar absorbidas como elegidas** — eso infló nuestra curva a un 93% falso y la dejó sin señal.
-- **Toda entrada nombra la propuesta más floja** — una bitácora donde todo sale bien no enseña nada.
+Two protections we learned the hard way:
+- **Absorbed proposals must never count as chosen** — that inflated our curve to a false 93% and left it with zero signal.
+- **Every logbook entry names the weakest proposal** — a logbook where everything looks great teaches nothing.
 
-## Resultados reales (no benchmark — producción)
+## Real results (not a benchmark — production)
 
-Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
+Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **9 mutaciones aprobadas** del prompt maestro (v1.0 → v2.0a) en ~3 semanas, cada una fundada en ejecuciones reales.
-- **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
-- **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
-- **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
+- **9 approved mutations** of the master prompt (v1.0 → v2.0a) in ~3 weeks, each grounded in real executions.
+- **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
+- **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
+- **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
 
-## Quickstart (5 minutos, cualquier terminal)
+## Quickstart (5 minutes, any terminal)
 
-Ningún paso de acá abajo requiere Claude Code — son archivos de texto que pegás
-en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
+Nothing below requires Claude Code — these are plain text files you paste
+into the conversation with your agent, whatever terminal or chat you use.
 
-1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
-2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R7 aplicadas.
-4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
-5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
+1. **Copy** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) into your repo and fill in the `{{placeholders}}` (agent name, project, where your roadmap lives).
+2. **Create the logbook** — a `learnings/aprendizajes.md` file with the template's header (or copy [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
+3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R7 already applied.
+4. **When you close the chunk:** paste the `reflexión-de-cierre` sub-prompt (≤5 lines) → append to the logbook with `Efectividad: X/Y`.
+5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
-**Opcional — solo si usás Claude Code:**
-- Instalá [`skill/SKILL.md`](skill/SKILL.md) en `~/.claude/skills/motor-evolutivo/` — el ciclo completo (pasos 3-5) se opera diciendo "motor", sin copiar/pegar nada a mano.
-- **Sensores 0-token:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) es Node.js puro — corre en cualquier terminal (no solo Claude Code) por cron/Task Scheduler, mide el resultado de las propuestas aplicadas (vía API de tu stack) y avisa por Telegram, sin gastar tokens de ningún LLM.
+**Optional — only if you use Claude Code:**
+- Install [`skill/SKILL.md`](skill/SKILL.md) into `~/.claude/skills/motor-evolutivo/` — the full cycle (steps 3-5) runs by just saying "motor," no manual copy/paste.
+- **0-token sensors:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) is plain Node.js — runs in any terminal (not just Claude Code) via cron/Task Scheduler, measures the outcome of applied proposals (via your stack's API) and alerts over Telegram, without spending a single LLM token.
 
-## Estructura del repo
+## Repo structure
 
 ```
-├── prompts/motor-evolutivo-template.md   ← EL prompt maestro (plantilla genérica)
-├── skill/SKILL.md                        ← operador del ciclo para Claude Code
-├── scripts/watch-sensores.js             ← score-collector 0-token (opcional)
-├── examples/bitacora-ejemplo.md          ← bitácora con entradas de ejemplo
-└── docs/arquitectura-autonomia.md        ← el plan v2.0 completo (qué automatizar y qué NO)
+├── prompts/motor-evolutivo-template.md   ← THE master prompt (generic template)
+├── skill/SKILL.md                        ← Claude Code cycle operator
+├── scripts/watch-sensores.js             ← 0-token score-collector (optional)
+├── examples/bitacora-ejemplo.md          ← example logbook with sample entries
+└── docs/arquitectura-autonomia.md        ← the full v2.0 plan (what to automate and what NOT to)
 ```
 
-## Cuándo NO usarlo
+## When NOT to use it
 
-- Si querés optimización automática masiva contra un dataset → usá [GEPA](https://github.com/gepa-ai/gepa) directo, es para eso.
-- Si nadie va a hacer la reflexión de cierre → sin ese paso el motor NO evoluciona; es un prompt estático con otro nombre.
-- Si querés que el agente ejecute producción sin supervisión → este protocolo es explícitamente lo contrario (R5). La señal de aprendizaje ES la decisión humana; sacala y el motor se puntúa solo (ya vimos cómo termina: curva inflada sin información).
+- If you want massive automatic optimization against a dataset → use [GEPA](https://github.com/gepa-ai/gepa) directly, that's what it's built for.
+- If nobody is going to do the closing reflection → without that step the engine does NOT evolve; it's just a static prompt with a different name.
+- If you want the agent to execute production unsupervised → this protocol is explicitly the opposite (R5). The learning signal IS the human decision; remove it and the engine scores itself (we've seen how that ends: an inflated curve with zero information).
 
-## Fundamento
+## Grounding
 
-| Principio | Fuente |
+| Principle | Source |
 |-----------|--------|
-| La reflexión en lenguaje natural supera al reward numérico | [GEPA — ICLR 2026](https://github.com/gepa-ai/gepa) |
-| Try → Reflect → Consolidate sin reentrenar | ACE (Agentic Context Engineering) |
-| Árbol de candidatos, no convergencia prematura | GEPA (selección Pareto) |
-| El prompt como proceso revisable, versionado en git | Survey de memoria de agentes 2026 |
+| Natural-language reflection beats numeric reward | [GEPA — "Reflective Prompt Evolution Can Outperform Reinforcement Learning" (arXiv 2507.19457)](https://arxiv.org/abs/2507.19457) |
+| Try → Reflect → Consolidate without retraining | ACE (Agentic Context Engineering) |
+| Candidate tree, not premature convergence | GEPA (Pareto selection) |
+| The prompt as a revisable process, versioned in git | 2026 agent-memory survey |
 
-## Licencia
+## License
 
-MIT — [Guillermo Fernández](https://github.com/Guille512). Si lo usás y el motor te enseña algo, contá la cicatriz en un issue: las reglas de otros son el mejor changelog.
+MIT — [Guillermo Fernández](https://github.com/Guille512). If you use it and the engine teaches you something, tell the scar in an issue: other people's rules are the best changelog.
