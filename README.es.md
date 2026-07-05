@@ -117,6 +117,15 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 | Árbol de candidatos, no convergencia prematura | GEPA (selección Pareto) |
 | El prompt como proceso revisable, versionado en git | Survey de memoria de agentes 2026 |
 
+## Atribución
+
+Si este protocolo (las reglas R1-R7, la métrica v1.3, o el patrón de sensores
+de autonomía acotada) aparece en tu propio artículo, charla o producto, un
+link de vuelta acá se agradece — es lo único que mantiene la conexión con
+el origen:
+
+> Motor Evolutivo — Guillermo Fernández, 2026. https://github.com/Guille512/motor-evolutivo
+
 ## Licencia
 
 MIT — [Guillermo Fernández](https://github.com/Guille512). Si lo usás y el motor te enseña algo, contá la cicatriz en un issue: las reglas de otros son el mejor changelog.

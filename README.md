@@ -118,6 +118,14 @@ into the conversation with your agent, whatever terminal or chat you use.
 | Candidate tree, not premature convergence | GEPA (Pareto selection) |
 | The prompt as a revisable process, versioned in git | 2026 agent-memory survey |
 
+## Attribution
+
+If this protocol (the R1-R7 rule set, the v1.3 metric, or the bounded-autonomy
+sensor pattern) shows up in your own writeup, talk, or product, a link back
+here is appreciated — it's what keeps this tied to where it came from:
+
+> Motor Evolutivo — Guillermo Fernández, 2026. https://github.com/Guille512/motor-evolutivo
+
 ## License
 
 MIT — [Guillermo Fernández](https://github.com/Guille512). If you use it and the engine teaches you something, tell the scar in an issue: other people's rules are the best changelog.
