@@ -88,6 +88,11 @@ Al cerrar un tramo, responder en ≤5 líneas y hacer append a la bitácora:
    - **0** ignorada/rechazada estando bien fundada
    PROHIBIDO contar absorbidas como elegidas (satura la curva y la deja sin señal).
 5. Nombrar SIEMPRE la jugada más floja de la tanda y por qué.
+6. **Dream Review (v2.1):** contrastar la tarea del tramo contra la bitácora — si el
+   mismo tipo de tarea MANUAL ya apareció ≥3 veces sin automatización propia (skill,
+   script, alias), sugerir el prompt EXACTO (pegable) para empaquetarla como capacidad.
+   Solo sugerencia — {{usuario}} decide (R5 intacta). Complementa al consolidador:
+   aquel promueve REGLAS repetidas; este detecta PROCESOS repetidos.
 
 ### 4. `consolidador`
 Cada ~5 entradas de bitácora: detectar patrones repetidos 3+ veces y promoverlos
@@ -120,3 +125,7 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
 - **v1.0 — {{fecha_de_hoy}}:** instancia inicial desde la plantilla del Motor Evolutivo
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
+
+> Nota de versión de la plantilla: incluye hasta la mutación **v2.1 Dream Review**
+> (2026-07-05) del motor original en producción. Tu instancia arranca en v1.0 propia
+> y evoluciona por su cuenta — el changelog de arriba es TUYO, no el del original.
