@@ -81,13 +81,19 @@ Al cerrar un tramo, responder en ≤5 líneas y hacer append a la bitácora:
 1. ¿Qué jugada eligió {{usuario}}? ¿Por qué ESA? (el tipo, no el caso puntual)
 2. ¿Qué rechazó o ignoró, y qué enseña eso?
 3. ¿Hay una regla nueva que merezca la bitácora? (1 línea accionable)
-4. Cerrar con `Efectividad: X/Y` — **métrica v1.3:**
+4. Cerrar con `Efectividad: X/Y` — **métrica v1.4:**
    - **1.0** elegida tal como se propuso
    - **0.5** absorbida/reformulada por el humano
    - **0.5★** AUTO-CORREGIDA: R7 la anuló por premisa falsa antes de prod (señal POSITIVA)
    - **0** ignorada/rechazada estando bien fundada
+   - **`D` (diferida)** propuesta pero el humano no decidió ni ejecutó en el tramo — **NO
+     entra en Y** (no es 0 ni 1.0); se lista aparte en `Diferidas:` (ver paso 5b)
    PROHIBIDO contar absorbidas como elegidas (satura la curva y la deja sin señal).
 5. Nombrar SIEMPRE la jugada más floja de la tanda y por qué.
+5b. **Listar `Diferidas:`** — las jugadas `D` del tramo, 1 línea c/u con razón, o `—` si
+    ninguna. Entrada sin esta línea = inválida. Las diferidas no penalizan la curva (no
+    entran en Y) pero se reportan para que no se escondan — ver la señal `% diferidas` en
+    la operación Curva de la skill.
 6. **Dream Review (v2.1):** contrastar la tarea del tramo contra la bitácora — si el
    mismo tipo de tarea MANUAL ya apareció ≥3 veces sin automatización propia (skill,
    script, alias), sugerir el prompt EXACTO (pegable) para empaquetarla como capacidad.
@@ -126,6 +132,7 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v2.1 Dream Review**
-> (2026-07-05) del motor original en producción. Tu instancia arranca en v1.0 propia
-> y evoluciona por su cuenta — el changelog de arriba es TUYO, no el del original.
+> Nota de versión de la plantilla: incluye hasta la mutación **v2.2 métrica v1.4**
+> (2026-07-06: estado `D` diferida + señal `% diferidas` en la curva) del motor original
+> en producción. Tu instancia arranca en v1.0 propia y evoluciona por su cuenta — el
+> changelog de arriba es TUYO, no el del original.
