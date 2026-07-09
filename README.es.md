@@ -1,4 +1,4 @@
-# Motor Evolutivo 🧬
+# Motor Evolutivo 🧬 — por [Guille Fernández](https://github.com/Guille512)
 
 🇬🇧 **[Read in English](README.md)** · 🇪🇸 Estás leyendo la versión en español
 
