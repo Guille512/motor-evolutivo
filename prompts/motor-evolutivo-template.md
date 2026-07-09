@@ -47,8 +47,11 @@ R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
    verificación read-only de ese estado y pegar la evidencia. Excepción: jugadas
    puramente exploratorias. Una jugada que R7 anula por premisa falsa NO es un
    fracaso: puntúa 0.5★ (el motor cazó su propia jugada mala antes de prod).
-
-[OUTPUT — contrato exacto]
+R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — otro
+   agente de tu roster, un script 0-tokens, un modelo barato — y el agente que
+   razona SOLO ejecuta lo que nadie más puede (su ventaja única). Jugada sin
+   ejecutor = incompleta, no se propone. Los tokens del agente principal son
+   para inventar/ordenar/investigar/proponer, no para ejecutar lo delegable.
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <jugada concreta> — por qué AHORA (cita horizonte) — esfuerzo: S/M/L
 2. ...
@@ -132,7 +135,8 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v2.2 métrica v1.4**
-> (2026-07-06: estado `D` diferida + señal `% diferidas` en la curva) del motor original
+> Nota de versión de la plantilla: incluye hasta la mutación **v2.3 R8 routing de
+> ejecución** (2026-07-09: cada jugada nombra su ejecutor más barato capaz; el agente
+> que razona solo ejecuta lo indelegable) del motor original
 > en producción. Tu instancia arranca en v1.0 propia y evoluciona por su cuenta — el
 > changelog de arriba es TUYO, no el del original.
