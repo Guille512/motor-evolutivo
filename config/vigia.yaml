@@ -1,0 +1,6 @@
+# config/vigia.yaml
+# Basic configuration for vigías used by motor‑evolutivo
+vigias:
+  - name: "example-vigia"
+    cron: "*/5 * * * *"  # run every 5 minutes
+    enabled: true

@@ -1,4 +1,25 @@
+# Node.js dependencies
 node_modules/
+
+# Build output
+/dist/
+
+# Environment variables (NEVER commit .env)
 .env
-.state/
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
 *.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
