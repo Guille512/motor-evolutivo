@@ -73,7 +73,7 @@ Two protections we learned the hard way:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **12 approved mutations** of the master prompt (v1.0 → v2.3) in ~4 weeks, each grounded in real executions.
+- **12 approved mutations** of the master prompt (v1.0 → v2.3) in ~4 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
