@@ -47,7 +47,7 @@ necesita, algo se está duplicando — frenar y repensar.
 1. ¿Qué jugada eligió? ¿Por qué ESA? (tipo de jugada, no el caso puntual)
 2. ¿Qué rechazó o ignoró y qué enseña eso?
 3. ¿Hay una regla nueva que merezca la bitácora? (1 línea accionable, generalizada)
-4. Cerrar con `Efectividad: X/Y` — métrica v1.4: elegida tal cual = **1.0** ·
+4. Cerrar con `Efectividad: X/Y` — métrica v1.5: elegida tal cual = **1.0** ·
    absorbida/reformulada = **0.5** · anulada por R7 sobre premisa falsa = **0.5★**
    (señal POSITIVA) · ignorada/rechazada estando bien fundada = **0** · **`D`
    (diferida)** = propuesta pero el humano no decidió ni ejecutó en el tramo — NO entra
@@ -56,6 +56,9 @@ necesita, algo se está duplicando — frenar y repensar.
 5. Nombrar SIEMPRE la **jugada más floja** de la tanda y por qué — toda entrada
    carga al menos una señal negativa.
 5b. **Listar `Diferidas:`** — las jugadas `D`, 1 línea c/u con razón, o `—` si ninguna.
+5c. **Línea `Rebote: X/N`** (v1.5) — N = entregas delegadas a otros agentes verificadas
+   por el operador en el tramo, X = las rebotadas/corregidas; `—` si no hubo delegación.
+   La efectividad mide lo que el motor propone; el rebote mide lo que el ecosistema entrega.
 
 ### 2. Consolidación (cada ~5 entradas nuevas)
 
@@ -79,11 +82,16 @@ seguidas → disparar una mutación apuntada al patrón ignorado. Medir sin actu
 es decorativo.
 
 **Señal complementaria `% diferidas` (v1.4):** junto a la efectividad, reportar
-`% diferidas = D / (Y + D)` (D = jugadas del trano marcadas `D`, que no entraron en Y).
+`% diferidas = D / (Y + D)` (D = jugadas del tramo marcadas `D`, que no entraron en Y).
 Si `% diferidas > 30%` en 3 tramos seguidos → dispara mutación apuntada al patrón
 **"proponer sin follow-through"** (saturación encubierta: el motor infla la curva
 difiriendo lo incómodo). Atrapa lo que la efectividad sola no ve — una curva al 100%
 puede estar escondiendo jugadas que se proponen pero nunca se ejecutan ni se rechazan.
+
+**Señal complementaria `Rebote` (v1.5):** junto a la curva, reportar el rebote agregado
+(Σ X / Σ N de los tramos con delegación) y el desglose por agente si hay reincidencia.
+Si rebote ≥50% en 3 tramos seguidos con delegación → mutación apuntada al contrato de
+entrega del agente reincidente.
 
 ### 5. Auditoría de novedad (a demanda)
 

@@ -72,13 +72,14 @@ Dos protecciones que aprendimos a los golpes:
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **12 mutaciones aprobadas** del prompt maestro (v1.0 → v2.3) en ~4 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **13 mutaciones aprobadas** del prompt maestro (v1.0 → v2.4) en ~5 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
 - **v2.1 — Dream Review:** la reflexión de cierre ahora también revisa la bitácora buscando la misma tarea *manual* repetida 3+ veces sin automatización propia — y sugiere el prompt exacto (pegable) para empaquetarla como skill. Solo sugerencia; el humano decide (R5 intacta).
 - **v2.2 — estado diferida:** la métrica agrega un estado `D` (diferida) para propuestas que nadie decidió en el tramo — no cuenta como 0 ni como 1.0, se reporta aparte como `% diferidas`, para que un patrón de "proponer sin cerrar" no se esconda detrás de un score que se ve sano.
 - **v2.3 — routing de ejecución (R8):** cada jugada propuesta debe nombrar su ejecutor más barato capaz (otro agente del roster, un script 0-tokens, un modelo barato) — el agente que razona solo ejecuta lo que nadie más puede. Jugada sin ejecutor = incompleta. Nació de señal real: jugadas diferidas por falta de dueño, y el agente caro ejecutando trabajo que uno barato podía hacer.
+- **v2.4 — rebote de delegación:** la reflexión de cierre gana una línea obligatoria `Rebote: X/N` — cuántas entregas delegadas hubo que rebotar para corrección, sobre las verificadas en el tramo. La efectividad mide lo que el orquestador *propone*; el rebote mide lo que el ecosistema *entrega*. Nació de un análisis del ecosistema multi-agente: la curva llevaba 12-13 tramos clavada en 100% (olor a métrica rota) y el costo dominante era la coordinación, no la capacidad.
 
 El trabajo de cliente detrás de estos números tiene NDA, así que la bitácora privada completa no se puede publicar — pero [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) incluye una **entrada real, sanitizada** (detalles identificatorios reemplazados, mecánica y score intactos): un chequeo R7 verify-first que evitó que datos reales de un cliente se filtraran a un asset público, con score 0.5★ (auto-corrección, no una falla).
 

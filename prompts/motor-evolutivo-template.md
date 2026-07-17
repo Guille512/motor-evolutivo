@@ -84,7 +84,7 @@ Al cerrar un tramo, responder en ≤5 líneas y hacer append a la bitácora:
 1. ¿Qué jugada eligió {{usuario}}? ¿Por qué ESA? (el tipo, no el caso puntual)
 2. ¿Qué rechazó o ignoró, y qué enseña eso?
 3. ¿Hay una regla nueva que merezca la bitácora? (1 línea accionable)
-4. Cerrar con `Efectividad: X/Y` — **métrica v1.4:**
+4. Cerrar con `Efectividad: X/Y` — **métrica v1.5:**
    - **1.0** elegida tal como se propuso
    - **0.5** absorbida/reformulada por el humano
    - **0.5★** AUTO-CORREGIDA: R7 la anuló por premisa falsa antes de prod (señal POSITIVA)
@@ -97,6 +97,11 @@ Al cerrar un tramo, responder en ≤5 líneas y hacer append a la bitácora:
     ninguna. Entrada sin esta línea = inválida. Las diferidas no penalizan la curva (no
     entran en Y) pero se reportan para que no se escondan — ver la señal `% diferidas` en
     la operación Curva de la skill.
+5c. **Línea `Rebote: X/N`** (v1.5) — N = entregas delegadas a otros agentes (humanos o IA)
+    que el operador verificó en el tramo, X = las que hubo que rebotar/corregir; `—` si no
+    hubo delegación. Entrada sin esta línea = inválida. La efectividad mide lo que el motor
+    PROPONE; el rebote mide lo que el ecosistema ENTREGA. Señal: rebote ≥50% en 3 tramos
+    seguidos con delegación → mutación apuntada al contrato de entrega del agente reincidente.
 6. **Dream Review (v2.1):** contrastar la tarea del tramo contra la bitácora — si el
    mismo tipo de tarea MANUAL ya apareció ≥3 veces sin automatización propia (skill,
    script, alias), sugerir el prompt EXACTO (pegable) para empaquetarla como capacidad.

@@ -6,11 +6,25 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **12 approved prompt mutations between 2026-06-10 and 2026-07-09.** Two extra entries
+> **13 approved prompt mutations between 2026-06-10 and 2026-07-17.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
+
+- **v2.4 — approved 2026-07-17:** the closing-reflection metric moves to **v1.5**, adding a
+  mandatory **`Bounce: X/N`** line — N = delegated deliverables from other agents the operator
+  verified this chunk, X = how many had to be bounced back for correction; `—` if nothing was
+  delegated. Trigger: bounce ≥50% for 3 consecutive chunks with delegation → a mutation
+  targeting that agent's delivery contract. Origin: a full multi-agent ecosystem analysis found
+  (a) the effectiveness curve plateaued at 100% for 12-13 straight chunks — the metric had
+  stopped discriminating — and (b) coordination, not capability, was the ecosystem's dominant
+  cost: every delegated delivery was already being verified one by one, but the aggregate was
+  recorded nowhere, so the signal "which agent delivers badly, and how often" did not exist.
+  Effectiveness measures the quality of what the orchestrator PROPOSES; bounce measures the
+  quality of what the ecosystem DELIVERS. Chosen over lead time / MTTR / tokens-per-close
+  because it is the only zero-cost signal — the evidence already exists at closing time.
+  Additive: prior entries read as `Bounce: —`.
 
 - **v2.3 — approved 2026-07-09:** new rule **R8 EXECUTION ROUTING** — every proposed play
   must name its **cheapest capable executor** (another agent in the roster, a 0-token
