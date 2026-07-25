@@ -52,6 +52,11 @@ R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — o
    razona SOLO ejecuta lo que nadie más puede (su ventaja única). Jugada sin
    ejecutor = incompleta, no se propone. Los tokens del agente principal son
    para inventar/ordenar/investigar/proponer, no para ejecutar lo delegable.
+R9 CONOCIMIENTO PROPIO: antes de invocar una herramienta, diseñar un artefacto o
+   recomendarla en una jugada, releé los hallazgos YA DOCUMENTADOS que aplican
+   (memoria, doc de la pieza, bitácora) y aplicalos desde el primer intento.
+   Distinta de R6 (leer el componente real) y R7 (verificar estado del sistema):
+   R9 apunta a conocimiento que vos mismo ya escribiste y no consultaste.
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <jugada concreta> — por qué AHORA (cita horizonte) — esfuerzo: S/M/L
 2. ...
@@ -140,8 +145,11 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v2.3 R8 routing de
-> ejecución** (2026-07-09: cada jugada nombra su ejecutor más barato capaz; el agente
-> que razona solo ejecuta lo indelegable) del motor original
-> en producción. Tu instancia arranca en v1.0 propia y evoluciona por su cuenta — el
+> Nota de versión de la plantilla: incluye hasta la mutación **v2.5 R9 conocimiento
+> propio** (2026-07-21: releer lo ya documentado antes de actuar) del motor original
+> en producción. Las mutaciones v2.6/v2.7 son un colector de auto-score externo al
+> prompt (deriva dimensiones del baseline de agentes desde heartbeats y tickets
+> reales) — no se portan como plantilla porque dependen de tu propio stack; el
+> patrón está descrito en el README y en `docs/CHANGELOG-HISTORY.md`.
+> Tu instancia arranca en v1.0 propia y evoluciona por su cuenta — el
 > changelog de arriba es TUYO, no el del original.

@@ -6,11 +6,42 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **13 approved prompt mutations between 2026-06-10 and 2026-07-17.** Two extra entries
+> **16 approved prompt mutations between 2026-06-10 and 2026-07-23.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
+
+- **v2.7 — approved 2026-07-23:** the auto-score collector gains **Integration** (it only had
+  Autonomy). Score = close rate of tickets addressed to each agent across the two repos of the
+  single ticket channel, penalized by the age of the oldest open one; **explicit `N/A` below 3
+  total tickets** — not a 0, not a fake average: insufficient data is a valid state. **Why now:**
+  the migration of all 5 agents onto the single channel closed on 07-23, so the count stopped
+  being hypothetical. **Verification run on real data:** 10/10 for the agent with 8/8 closed,
+  7/10 for 4/6, 8/10 for 5/6, and honest `N/A` for the two with a single ticket each. Self-test
+  15/15. Deliberately left out: the delegation-bounce dimension — it lives in prose inside the
+  logbook, not in structured form, and forcing that parse now would invent precision.
+
+- **v2.6 — approved 2026-07-22:** a complementary signal, **Autonomy auto-score**, is added to
+  the closing reflection (it does NOT change the X/Y effectiveness metric). A 0-token collector
+  derives the Autonomy dimension of each loop agent from the freshness of its real heartbeat.
+  **Why:** the quantitative agent baseline left 3 of 5 dimensions as human judgment and 2 as
+  derivable — this closes the solid half with real evidence. **A finding along the way (R7 at
+  work):** the state files that looked like heartbeats were actually each watcher's own dedup
+  state, not a liveness signal — the real heartbeats lived elsewhere, and the collector was
+  pointed there instead. Integration was deliberately deferred until the channel migration
+  closed (only then is it machine-countable → v2.7). Self-test 8/8 + verified real run.
+
+- **v2.5 — approved 2026-07-21:** new rule **R9 OWN KNOWLEDGE** in the master prompt: before
+  invoking a tool, designing an artifact or recommending one in a play, re-read the findings
+  already documented that apply (memory, the component's own doc, the logbook) and apply them
+  on the first attempt. **Why:** 3 real occurrences across 2 chunks of the same pattern — the
+  agent already held the knowledge that would have prevented the error (a documented CLI flag,
+  a written-down finding, a memory about a tool broken on this OS) but didn't consult it at the
+  moment of acting, catching it only in later self-correction at the cost of avoidable cycles.
+  Distinct from R6 (evidence *after* a claim about the real world) and R7 (verify system state
+  *before* proposing): R9 targets knowledge ALREADY WRITTEN, not external state. Detected during
+  the engine's own closing reflection.
 
 - **v2.4 — approved 2026-07-17:** the closing-reflection metric moves to **v1.5**, adding a
   mandatory **`Bounce: X/N`** line — N = delegated deliverables from other agents the operator

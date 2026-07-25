@@ -40,7 +40,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 
 **The result:** an agent that never proposes the same thing twice, that verifies its assumptions before suggesting a fix, and whose master prompt is measurably better this week than last week — with a git-versioned changelog to prove it.
 
-## The 7 rules (the core of it)
+## The 9 rules (the core of it)
 
 | Rule | What it does | Which real failure it came from |
 |------|---------------|----------------------------------|
@@ -51,6 +51,8 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 | **R5 SUPERVISION** | Propose, NEVER execute production alone | A real production incident |
 | **R6 REVALIDATE** | When claiming "X is broken/healthy," paste the evidence (log, timestamp) IN the same sentence | 11+ unverified claims found in the logbook |
 | **R7 VERIFY-BEFORE-PROPOSING** | Before proposing "fix X," verify X is actually broken | Phantom-fix proposals based on stale memory |
+| **R8 EXECUTION ROUTING** | Every proposal names its cheapest capable executor; the reasoning agent only does what nobody else can | Plays deferred for lack of an owner + the expensive agent doing cheap work |
+| **R9 OWN KNOWLEDGE** | Re-read what you already wrote down about a tool before using it | 3 errors the agent already had the documented fix for, unconsulted |
 
 None of these rules came from theory. **They're all scars** — each one has the date and the failure that caused it in the changelog.
 
@@ -73,7 +75,7 @@ Two protections we learned the hard way:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **13 approved mutations** of the master prompt (v1.0 → v2.4) in ~5 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
+- **16 approved mutations** of the master prompt (v1.0 → v2.7) in ~6 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
@@ -81,6 +83,8 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
 - **v2.2 — deferred state:** the metric adds a `D` (deferred) state for proposals nobody decided on this chunk — it doesn't count as a 0 or a 1.0, it's tracked separately as `% deferred`, so a "propose without follow-through" pattern can't hide inside a healthy-looking score.
 - **v2.3 — execution routing (R8):** every proposed play must name its cheapest capable executor (another agent in your roster, a 0-token script, a cheap model) — the reasoning agent only executes what nobody else can. A play without an executor is incomplete. Born from real signal: plays kept getting deferred for lack of an owner, and the expensive agent kept executing work a cheaper one could do.
 - **v2.4 — delegation bounce:** the closing reflection gains a mandatory `Bounce: X/N` line — how many delegated deliverables had to be bounced back for correction, out of those verified this chunk. Effectiveness measures what the orchestrator *proposes*; bounce measures what the ecosystem *delivers*. Born from a multi-agent ecosystem analysis: the curve had been flat at 100% for 12-13 chunks (a broken-metric smell) and coordination — not capability — was the dominant cost.
+- **v2.5 — own knowledge (R9):** before invoking a tool, designing an artifact or recommending one in a play, the agent must re-read the findings it *already wrote down* (memory, the component's own doc, the logbook) and apply them on the first try. Distinct from R6 (read the real component) and R7 (verify system state): R9 targets knowledge that already exists in writing and simply wasn't consulted. Born from 3 real occurrences across 2 chunks of the exact same pattern — the agent had the knowledge to prevent the error, caught it only in later self-correction, and paid avoidable cycles.
+- **v2.6 / v2.7 — the engine scores itself from real data:** a 0-token collector derives 2 of the 5 dimensions of the agent baseline from evidence instead of judgment. **Autonomy** ← freshness of each loop agent's heartbeat. **Integration** ← close rate of tickets addressed to that agent in the shared channel, penalized by the age of the oldest open one — with an **explicit `N/A` below 3 tickets** (insufficient data is a valid state, not a 0 and not a fake average). Same principle as v2.0a: **automate the evidence, never the decision.** A finding along the way (R7 at work): the files that *looked* like heartbeats were actually the watchers' own dedup state — the real heartbeats lived somewhere else, and the collector was pointed there.
 
 The client work behind these numbers is under NDA, so the full private logbook can't be published — but [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) includes one **real, sanitized entry** (identifying details replaced, mechanics and score untouched): an R7 verify-first check that caught real client data about to leak into a public asset, scored 0.5★ (self-correction, not a failure).
 
@@ -91,7 +95,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 1. **Copy** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) into your repo and fill in the `{{placeholders}}` (agent name, project, where your roadmap lives).
 2. **Create the logbook** — a `learnings/aprendizajes.md` file with the template's header (or copy [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R7 already applied.
+3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R9 already applied.
 4. **When you close the chunk:** paste the `reflexión-de-cierre` sub-prompt (≤5 lines) → append to the logbook with `Efectividad: X/Y`.
 5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
@@ -126,7 +130,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 ## Attribution
 
-If this protocol (the R1-R7 rule set, the v1.3 metric, or the bounded-autonomy
+If this protocol (the R1-R9 rule set, the v1.3 metric, or the bounded-autonomy
 sensor pattern) shows up in your own writeup, talk, or product, a link back
 here is appreciated — it's what keeps this tied to where it came from:
 

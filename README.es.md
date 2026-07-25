@@ -39,7 +39,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 
 **El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
 
-## Las 7 reglas (el corazón)
+## Las 9 reglas (el corazón)
 
 | Regla | Qué hace | De qué error real nació |
 |-------|----------|------------------------|
@@ -50,6 +50,8 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 | **R5 SUPERVISIÓN** | Proponer, NUNCA ejecutar producción solo | Un incidente de producción real |
 | **R6 REVALIDAR** | Al afirmar "X está roto/sano", pegar la evidencia (log, timestamp) EN la misma frase | 11+ afirmaciones sin verificar encontradas en bitácora |
 | **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad | Propuestas de arreglos fantasma sobre memoria desactualizada |
+| **R8 ROUTING DE EJECUCIÓN** | Cada jugada nombra su ejecutor más barato capaz; el agente que razona solo hace lo indelegable | Jugadas diferidas por falta de dueño + el agente caro haciendo trabajo barato |
+| **R9 CONOCIMIENTO PROPIO** | Releer lo que vos mismo ya documentaste sobre una herramienta antes de usarla | 3 errores cuyo fix el agente ya tenía escrito y no consultó |
 
 Ninguna regla salió de la teoría. **Todas son cicatrices**: cada una tiene la fecha y el error que la generó en el changelog.
 
@@ -72,7 +74,7 @@ Dos protecciones que aprendimos a los golpes:
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **13 mutaciones aprobadas** del prompt maestro (v1.0 → v2.4) en ~5 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **16 mutaciones aprobadas** del prompt maestro (v1.0 → v2.7) en ~6 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
@@ -80,6 +82,8 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
 - **v2.2 — estado diferida:** la métrica agrega un estado `D` (diferida) para propuestas que nadie decidió en el tramo — no cuenta como 0 ni como 1.0, se reporta aparte como `% diferidas`, para que un patrón de "proponer sin cerrar" no se esconda detrás de un score que se ve sano.
 - **v2.3 — routing de ejecución (R8):** cada jugada propuesta debe nombrar su ejecutor más barato capaz (otro agente del roster, un script 0-tokens, un modelo barato) — el agente que razona solo ejecuta lo que nadie más puede. Jugada sin ejecutor = incompleta. Nació de señal real: jugadas diferidas por falta de dueño, y el agente caro ejecutando trabajo que uno barato podía hacer.
 - **v2.4 — rebote de delegación:** la reflexión de cierre gana una línea obligatoria `Rebote: X/N` — cuántas entregas delegadas hubo que rebotar para corrección, sobre las verificadas en el tramo. La efectividad mide lo que el orquestador *propone*; el rebote mide lo que el ecosistema *entrega*. Nació de un análisis del ecosistema multi-agente: la curva llevaba 12-13 tramos clavada en 100% (olor a métrica rota) y el costo dominante era la coordinación, no la capacidad.
+- **v2.5 — conocimiento propio (R9):** antes de invocar una herramienta, diseñar un artefacto o recomendarla en una jugada, el agente debe releer los hallazgos que *él mismo ya escribió* (memoria, doc de la pieza, bitácora) y aplicarlos desde el primer intento. Distinta de R6 (leer el componente real) y R7 (verificar el estado del sistema): R9 apunta a conocimiento que ya existe escrito y simplemente no se consultó. Nació de 3 ocurrencias reales en 2 tramos del mismo patrón exacto — el agente tenía con qué prevenir el error, lo cazó recién en auto-corrección posterior, y pagó ciclos evitables.
+- **v2.6 / v2.7 — el motor se puntúa solo desde datos reales:** un colector 0-tokens deriva 2 de las 5 dimensiones del baseline de agentes desde evidencia en vez de juicio. **Autonomía** ← frescura del heartbeat de cada agente-loop. **Integración** ← tasa de cierre de los tickets dirigidos a ese agente en el canal compartido, penalizada por la antigüedad del más viejo abierto — con **`N/A` explícito por debajo de 3 tickets** (dato insuficiente es un estado válido, no un 0 ni un promedio falso). Mismo principio que v2.0a: **automatizar la EVIDENCIA, nunca la DECISIÓN.** Un hallazgo en el camino (R7 en acción): los archivos que *parecían* heartbeats eran en realidad el estado anti-duplicado de las propias vigías — los latidos reales vivían en otro lado, y ahí se apuntó el colector.
 
 El trabajo de cliente detrás de estos números tiene NDA, así que la bitácora privada completa no se puede publicar — pero [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) incluye una **entrada real, sanitizada** (detalles identificatorios reemplazados, mecánica y score intactos): un chequeo R7 verify-first que evitó que datos reales de un cliente se filtraran a un asset público, con score 0.5★ (auto-corrección, no una falla).
 
@@ -90,7 +94,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
 2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R7 aplicadas.
+3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R9 aplicadas.
 4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
 5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
 
@@ -125,7 +129,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 ## Atribución
 
-Si este protocolo (las reglas R1-R7, la métrica v1.3, o el patrón de sensores
+Si este protocolo (las reglas R1-R9, la métrica v1.3, o el patrón de sensores
 de autonomía acotada) aparece en tu propio artículo, charla o producto, un
 link de vuelta acá se agradece — es lo único que mantiene la conexión con
 el origen:
