@@ -72,6 +72,15 @@ Dos protecciones que aprendimos a los golpes:
 
 ## Resultados reales (no benchmark — producción)
 
+![Una reflexión-de-cierre real](docs/reflection-example.png)
+
+> Una **reflexión-de-cierre real** — esta salió del mismo tramo que produjo esta
+> actualización del README (25/07/2026). Sanitizada (sin nombres de clientes) y
+> maquetada para que se lea; los scores, la jugada más floja nombrada y la
+> auto-corrección son textuales de la bitácora. Fuente:
+> [`docs/reflection-example.html`](docs/reflection-example.html).
+
+
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
 - **16 mutaciones aprobadas** del prompt maestro (v1.0 → v2.7) en ~6 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)

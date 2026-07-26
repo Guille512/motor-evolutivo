@@ -73,6 +73,14 @@ Two protections we learned the hard way:
 
 ## Real results (not a benchmark — production)
 
+![A real closing reflection](docs/reflection-example.png)
+
+> A **real closing reflection** — this one from the chunk that produced this very
+> README update (2026-07-25). Sanitized (client names removed) and typeset for
+> legibility; the scores, the named weakest play and the self-correction are
+> verbatim from the logbook. Source: [`docs/reflection-example.html`](docs/reflection-example.html).
+
+
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
 - **16 approved mutations** of the master prompt (v1.0 → v2.7) in ~6 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
