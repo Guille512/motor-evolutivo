@@ -50,7 +50,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 | **R4 GROUNDING** | Every proposal cites its source: historical / current / roadmap | Proposals with no verifiable anchor |
 | **R5 SUPERVISION** | Propose, NEVER execute production alone | A real production incident |
 | **R6 REVALIDATE** | When claiming "X is broken/healthy," paste the evidence (log, timestamp) IN the same sentence | 11+ unverified claims found in the logbook |
-| **R7 VERIFY-BEFORE-PROPOSING** | Before proposing "fix X," verify X is actually broken | Phantom-fix proposals based on stale memory |
+| **R7 VERIFY-BEFORE-PROPOSING** | Before proposing "fix X," verify X is actually broken. **R7-b:** before ruling on *another agent's* proposal, read the real code it touches — and demand the new capability before the tidiness | Phantom-fix proposals based on stale memory · verdicts written about a text instead of the codebase |
 | **R8 EXECUTION ROUTING** | Every proposal names its cheapest capable executor; the reasoning agent only does what nobody else can | Plays deferred for lack of an owner + the expensive agent doing cheap work |
 | **R9 OWN KNOWLEDGE** | Re-read what you already wrote down about a tool before using it | 3 errors the agent already had the documented fix for, unconsulted |
 
@@ -83,7 +83,7 @@ Two protections we learned the hard way:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **16 approved mutations** of the master prompt (v1.0 → v2.7) in ~6 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
+- **17 approved mutations** of the master prompt (v1.0 → v2.8) in ~8 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
@@ -92,6 +92,17 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
 - **v2.3 — execution routing (R8):** every proposed play must name its cheapest capable executor (another agent in your roster, a 0-token script, a cheap model) — the reasoning agent only executes what nobody else can. A play without an executor is incomplete. Born from real signal: plays kept getting deferred for lack of an owner, and the expensive agent kept executing work a cheaper one could do.
 - **v2.4 — delegation bounce:** the closing reflection gains a mandatory `Bounce: X/N` line — how many delegated deliverables had to be bounced back for correction, out of those verified this chunk. Effectiveness measures what the orchestrator *proposes*; bounce measures what the ecosystem *delivers*. Born from a multi-agent ecosystem analysis: the curve had been flat at 100% for 12-13 chunks (a broken-metric smell) and coordination — not capability — was the dominant cost.
 - **v2.5 — own knowledge (R9):** before invoking a tool, designing an artifact or recommending one in a play, the agent must re-read the findings it *already wrote down* (memory, the component's own doc, the logbook) and apply them on the first try. Distinct from R6 (read the real component) and R7 (verify system state): R9 targets knowledge that already exists in writing and simply wasn't consulted. Born from 3 real occurrences across 2 chunks of the exact same pattern — the agent had the knowledge to prevent the error, caught it only in later self-correction, and paid avoidable cycles.
+- **v2.8 — the engine learned to audit instead of opine:** it had a rule for verifying its *own*
+  assumptions before proposing, and none for the case that had quietly become frequent —
+  *evaluating what another agent proposes*. R7-b now forces reading the actual code a proposal
+  touches before ruling on it. What made the rule: in the verdict that triggered it, 80% of the
+  value delivered wasn't the ruling on the five proposals — it was a bug none of them mentioned
+  (three API routes silently falling back to one tenant's data when a query param was missing,
+  returning 200 all the while). Two filters came with it: **demand the new capability before the
+  tidiness** — if "what can you do afterwards that you couldn't before?" answers "nothing, it's
+  cleaner", the refactor is debt under another name — and any *move this config into the
+  database* proposal must declare what part of it isn't data (a CSS framework's classes don't
+  survive static purging from a table; a component isn't serializable).
 - **v2.6 / v2.7 — the engine scores itself from real data:** a 0-token collector derives 2 of the 5 dimensions of the agent baseline from evidence instead of judgment. **Autonomy** ← freshness of each loop agent's heartbeat. **Integration** ← close rate of tickets addressed to that agent in the shared channel, penalized by the age of the oldest open one — with an **explicit `N/A` below 3 tickets** (insufficient data is a valid state, not a 0 and not a fake average). Same principle as v2.0a: **automate the evidence, never the decision.** A finding along the way (R7 at work): the files that *looked* like heartbeats were actually the watchers' own dedup state — the real heartbeats lived somewhere else, and the collector was pointed there.
 
 The client work behind these numbers is under NDA, so the full private logbook can't be published — but [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) includes one **real, sanitized entry** (identifying details replaced, mechanics and score untouched): an R7 verify-first check that caught real client data about to leak into a public asset, scored 0.5★ (self-correction, not a failure).

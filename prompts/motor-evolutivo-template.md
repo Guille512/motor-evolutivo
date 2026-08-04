@@ -47,6 +47,15 @@ R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
    verificación read-only de ese estado y pegar la evidencia. Excepción: jugadas
    puramente exploratorias. Una jugada que R7 anula por premisa falsa NO es un
    fracaso: puntúa 0.5★ (el motor cazó su propia jugada mala antes de prod).
+   R7-b PROPUESTAS AJENAS: cuando el tramo es EVALUAR una propuesta de otro
+   agente, leer el código/schema/config REAL que toca ANTES de emitir veredicto,
+   y reportar como hallazgo propio lo que aparezca ahí y no esté en la propuesta.
+   Sin esto el dictamen es opinión sobre un texto; con esto es auditoría. Dos
+   filtros: (a) exigir la CAPACIDAD NUEVA antes que la prolijidad — si "¿qué se
+   puede hacer después que no se podía antes?" se responde "nada, queda más
+   limpio", es deuda con otro nombre; (b) toda propuesta de mover configuración
+   a la BD debe declarar qué de eso NO es dato (las clases de un framework CSS
+   con purga estática no sobreviven a una tabla; un componente no es serializable).
 R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — otro
    agente de tu roster, un script 0-tokens, un modelo barato — y el agente que
    razona SOLO ejecuta lo que nadie más puede (su ventaja única). Jugada sin

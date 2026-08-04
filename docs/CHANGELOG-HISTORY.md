@@ -6,12 +6,29 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **16 approved prompt mutations between 2026-06-10 and 2026-07-23.** Two extra entries
+> **17 approved prompt mutations between 2026-06-10 and 2026-08-03.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
 
+- **v2.8 — approved 2026-08-03:** R7 (verify-before-proposing) extended with **R7-b: other
+  agents' proposals**. R7 only covered the engine's *own* plays that assume a system state. It
+  had no rule for a case that had quietly become frequent — *evaluating what another agent
+  proposes* (three proposal tickets from the same agent in two days). R7-b now requires reading
+  the actual code, schema or config a proposal touches **before** issuing a verdict, and
+  reporting as an own finding whatever shows up there and is missing from the proposal. It adds
+  two filters: demand the **new capability** before the tidiness (if "what can you do afterwards
+  that you couldn't before?" answers "nothing, it's cleaner", the refactor is debt under another
+  name), and any "move this config into the database" proposal must first declare what part of
+  it **is not data**. **Why now:** in the verdict that triggered this, 80% of the delivered value
+  was not the ruling on the five proposals — it was a bug none of them mentioned: three API
+  routes falling back to one specific tenant when the query param was missing, silently serving
+  another tenant's data with a 200. Second occurrence of that same class in two days. Without
+  reading the code, that verdict would have been five tidy opinions about a text. **Expected
+  effect, stated up front so it can be falsified:** the next batch of proposals from any agent
+  ships with at least one own finding, or the rule did not work. Measured in the next
+  closing-reflection entry that evaluates someone else's proposals.
 - **v2.7 — approved 2026-07-23:** the auto-score collector gains **Integration** (it only had
   Autonomy). Score = close rate of tickets addressed to each agent across the two repos of the
   single ticket channel, penalized by the age of the oldest open one; **explicit `N/A` below 3

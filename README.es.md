@@ -49,7 +49,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 | **R4 FUNDAMENTO** | Cada propuesta cita su fuente: histórico / presente / roadmap | Propuestas sin ancla verificable |
 | **R5 SUPERVISIÓN** | Proponer, NUNCA ejecutar producción solo | Un incidente de producción real |
 | **R6 REVALIDAR** | Al afirmar "X está roto/sano", pegar la evidencia (log, timestamp) EN la misma frase | 11+ afirmaciones sin verificar encontradas en bitácora |
-| **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad | Propuestas de arreglos fantasma sobre memoria desactualizada |
+| **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad. **R7-b:** antes de dictaminar la propuesta *de otro agente*, leer el código real que toca — y exigir la capacidad nueva antes que la prolijidad | Propuestas de arreglos fantasma sobre memoria desactualizada · veredictos escritos sobre un texto en vez de sobre el código |
 | **R8 ROUTING DE EJECUCIÓN** | Cada jugada nombra su ejecutor más barato capaz; el agente que razona solo hace lo indelegable | Jugadas diferidas por falta de dueño + el agente caro haciendo trabajo barato |
 | **R9 CONOCIMIENTO PROPIO** | Releer lo que vos mismo ya documentaste sobre una herramienta antes de usarla | 3 errores cuyo fix el agente ya tenía escrito y no consultó |
 
@@ -83,7 +83,7 @@ Dos protecciones que aprendimos a los golpes:
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **16 mutaciones aprobadas** del prompt maestro (v1.0 → v2.7) en ~6 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **17 mutaciones aprobadas** del prompt maestro (v1.0 → v2.8) en ~8 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
@@ -92,6 +92,17 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
 - **v2.3 — routing de ejecución (R8):** cada jugada propuesta debe nombrar su ejecutor más barato capaz (otro agente del roster, un script 0-tokens, un modelo barato) — el agente que razona solo ejecuta lo que nadie más puede. Jugada sin ejecutor = incompleta. Nació de señal real: jugadas diferidas por falta de dueño, y el agente caro ejecutando trabajo que uno barato podía hacer.
 - **v2.4 — rebote de delegación:** la reflexión de cierre gana una línea obligatoria `Rebote: X/N` — cuántas entregas delegadas hubo que rebotar para corrección, sobre las verificadas en el tramo. La efectividad mide lo que el orquestador *propone*; el rebote mide lo que el ecosistema *entrega*. Nació de un análisis del ecosistema multi-agente: la curva llevaba 12-13 tramos clavada en 100% (olor a métrica rota) y el costo dominante era la coordinación, no la capacidad.
 - **v2.5 — conocimiento propio (R9):** antes de invocar una herramienta, diseñar un artefacto o recomendarla en una jugada, el agente debe releer los hallazgos que *él mismo ya escribió* (memoria, doc de la pieza, bitácora) y aplicarlos desde el primer intento. Distinta de R6 (leer el componente real) y R7 (verificar el estado del sistema): R9 apunta a conocimiento que ya existe escrito y simplemente no se consultó. Nació de 3 ocurrencias reales en 2 tramos del mismo patrón exacto — el agente tenía con qué prevenir el error, lo cazó recién en auto-corrección posterior, y pagó ciclos evitables.
+- **v2.8 — el motor aprendió a auditar en vez de opinar:** tenía regla para verificar sus *propias*
+  premisas antes de proponer, y ninguna para el caso que se había vuelto frecuente sin que nadie
+  lo notara: *evaluar lo que propone otro agente*. R7-b ahora obliga a leer el código real que la
+  propuesta toca antes de dictaminar. Lo que hizo la regla: en el veredicto que la disparó, el 80%
+  del valor entregado no fue el fallo sobre las cinco propuestas — fue un bug que ninguna
+  mencionaba (tres rutas de API cayendo en silencio a los datos de un inquilino cuando faltaba un
+  query param, devolviendo 200 igual). Vinieron con ella dos filtros: **exigir la capacidad nueva
+  antes que la prolijidad** — si "¿qué se puede hacer después que no se podía antes?" se responde
+  "nada, queda más limpio", el refactor es deuda con otro nombre — y toda propuesta de *mover esta
+  config a la base de datos* debe declarar qué parte de eso no es dato (las clases de un framework
+  CSS con purga estática no sobreviven a una tabla; un componente no es serializable).
 - **v2.6 / v2.7 — el motor se puntúa solo desde datos reales:** un colector 0-tokens deriva 2 de las 5 dimensiones del baseline de agentes desde evidencia en vez de juicio. **Autonomía** ← frescura del heartbeat de cada agente-loop. **Integración** ← tasa de cierre de los tickets dirigidos a ese agente en el canal compartido, penalizada por la antigüedad del más viejo abierto — con **`N/A` explícito por debajo de 3 tickets** (dato insuficiente es un estado válido, no un 0 ni un promedio falso). Mismo principio que v2.0a: **automatizar la EVIDENCIA, nunca la DECISIÓN.** Un hallazgo en el camino (R7 en acción): los archivos que *parecían* heartbeats eran en realidad el estado anti-duplicado de las propias vigías — los latidos reales vivían en otro lado, y ahí se apuntó el colector.
 
 El trabajo de cliente detrás de estos números tiene NDA, así que la bitácora privada completa no se puede publicar — pero [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md#003) incluye una **entrada real, sanitizada** (detalles identificatorios reemplazados, mecánica y score intactos): un chequeo R7 verify-first que evitó que datos reales de un cliente se filtraran a un asset público, con score 0.5★ (auto-corrección, no una falla).
