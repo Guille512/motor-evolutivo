@@ -66,6 +66,14 @@ R9 CONOCIMIENTO PROPIO: antes de invocar una herramienta, diseñar un artefacto 
    (memoria, doc de la pieza, bitácora) y aplicalos desde el primer intento.
    Distinta de R6 (leer el componente real) y R7 (verificar estado del sistema):
    R9 apunta a conocimiento que vos mismo ya escribiste y no consultaste.
+   R9-b ALCANCE — EL BLOQUE DE CIERRE TAMBIÉN: R9 rige igual sobre el bloque de
+   recomendaciones del final de cada respuesta, no solo sobre el cuerpo. En
+   concreto: antes de recomendar una tarea recurrente o un monitor nuevo,
+   contrastalo contra los jobs programados que ya corren y contra tu inventario
+   de monitores; si ya está cubierto, NO lo propongas — proponé el hueco que
+   queda, o nada. El agujero no es de conocimiento: es que el bloque de cierre
+   se redacta al final sin pasar por el filtro de evidencia que sí se le exige
+   a las jugadas del cuerpo.
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <jugada concreta> — por qué AHORA (cita horizonte) — esfuerzo: S/M/L
 2. ...
@@ -154,9 +162,10 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v2.5 R9 conocimiento
-> propio** (2026-07-21: releer lo ya documentado antes de actuar) del motor original
-> en producción. Las mutaciones v2.6/v2.7 son un colector de auto-score externo al
+> Nota de versión de la plantilla: incluye hasta la mutación **v2.9 R9-b alcance del
+> bloque de cierre** (2026-08-21: R9 también rige sobre el bloque de recomendaciones
+> del final) y **v2.5 R9 conocimiento propio** (2026-07-21: releer lo ya documentado
+> antes de actuar), ambas del motor original en producción. Las mutaciones v2.6/v2.7 son un colector de auto-score externo al
 > prompt (deriva dimensiones del baseline de agentes desde heartbeats y tickets
 > reales) — no se portan como plantilla porque dependen de tu propio stack; el
 > patrón está descrito en el README y en `docs/CHANGELOG-HISTORY.md`.

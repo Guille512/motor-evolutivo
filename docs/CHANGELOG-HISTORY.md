@@ -6,11 +6,27 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **17 approved prompt mutations between 2026-06-10 and 2026-08-03.** Two extra entries
+> **18 approved prompt mutations between 2026-06-10 and 2026-08-21.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
+
+- **v2.9 — approved 2026-08-21:** R9 (own knowledge) extended with **R9-b: the closing block
+  counts too**. R9 required re-reading what you already documented before acting, but it was
+  only ever applied to the body of a response. The closing block — the two or three tool
+  recommendations the engine appends at the end of every answer — was drafted last, without
+  passing the same evidence filter. The result was the same antipattern three times: proposing
+  a recurring watch task for something an already-installed scheduled job covered (2026-08-06,
+  self-retracted on execution; the rule was then consolidated into memory on 2026-08-17; and
+  again on 2026-08-21, this time *chosen by the user* before being retracted). R9-b now requires
+  contrasting any recommended recurring task or new monitor against the scheduled jobs already
+  running and the monitor inventory — if it is covered, propose the remaining gap or nothing.
+  **Deliberately not a new rule:** R9 already covered the case; only its scope was missing. A
+  tenth rule would have duplicated R9 and made the effect unattributable — so exactly one thing
+  mutated: where R9 applies. The scoring detail that made this visible: the retracted play
+  scored 0.5★ (self-correction over a false premise) rather than 0, which keeps the engine's
+  own safety mechanism from being penalised while still surfacing the repeat.
 
 - **v2.8 — approved 2026-08-03:** R7 (verify-before-proposing) extended with **R7-b: other
   agents' proposals**. R7 only covered the engine's *own* plays that assume a system state. It
