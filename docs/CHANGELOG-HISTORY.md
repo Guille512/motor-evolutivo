@@ -6,12 +6,36 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **18 approved prompt mutations between 2026-06-10 and 2026-08-21.** Two extra entries
+> **19 approved prompt mutations between 2026-06-10 and 2026-08-22.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
 
+- **v3.0 — approved 2026-08-22:** R6 (revalidate) extended with **R6-b: proof of red** — a
+  control written in the same work chunk (test, self-test, assert, monitor, guard, evidence
+  generator) does not count as coverage until it has been seen to go RED for the case it exists
+  to catch. Running it green is not enough: you break what it protects on purpose and paste the
+  red. It is the guard rule applied to the instrument itself.
+  *Why:* four occurrences in two weeks, and in all four the instrument was the broken thing while
+  its own test passed — (1) async tests that never awaited their promises; (2) an alarm the agent
+  had armed itself the day before, so the test could not fail; (3) a self-assert that measured
+  arithmetic instead of the code path it claimed to exercise; (4) the receipt generator itself —
+  the component whose entire purpose is that a PASS is *derived by tooling* rather than written by
+  the agent — silently emitting false green, because its shell invocation re-joined arguments
+  without re-quoting them and split any quoted pattern. A negative control that had to fail
+  returned exit 0. That component had never had a self-test at all. The rule had already been
+  stated as a loose line in occurrence (1) and was broken twice more after that, which is what
+  moved it into the master prompt.
+  **Deliberately not a tenth rule** — the same reasoning as v2.9's R9-b: R6 already covered
+  evidence, only its scope was missing, and a new rule would have duplicated it and made the
+  effect unattributable. One thing mutated: where R6 applies.
+  Shipped with **R6-c: do not duplicate a mutation** — re-read the pending, unapplied mutations
+  before proposing a new one. Origin: *this very mutation was proposed twice on the same day, by
+  two sessions of the same agent that could not see each other*, under two different names, and
+  the collision was only caught while reading the handoff memory at close. A duplicated mutation
+  inflates the same "repeated pattern" signal it uses to justify itself — the engine would have
+  been counting its own echo as evidence.
 - **v2.9 — approved 2026-08-21:** R9 (own knowledge) extended with **R9-b: the closing block
   counts too**. R9 required re-reading what you already documented before acting, but it was
   only ever applied to the body of a response. The closing block — the two or three tool

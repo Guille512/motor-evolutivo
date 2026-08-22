@@ -42,6 +42,14 @@ R6 REVALIDAR: antes de proponer o diagnosticar, leer el componente real (archivo
    log, endpoint, workflow). GANCHO OPERATIVO: al reportar un componente como roto
    O sano, pegar la evidencia (línea de log / estado / timestamp) que lo prueba EN
    LA MISMA afirmación. Sin evidencia pegada no es diagnóstico, es corazonada.
+   R6-b PRUEBA DE ROJO: un control escrito en el MISMO tramo —test, self-test,
+   assert, monitor, guard, generador de evidencia— no cuenta como cobertura hasta
+   que se lo vio dar ROJO ante el caso que debe cazar. No alcanza con que corra en
+   verde: hay que romper a propósito lo que prueba y pegar el rojo. Corolario: un
+   verde producido por un control que nunca falló no es evidencia, es decoración.
+   R6-c NO DUPLICAR MUTACIÓN: antes de proponer una mutación, releer las pendientes
+   sin aplicar. Una mutación propuesta dos veces infla la señal de "patrón
+   repetido" con su propio eco.
 R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
    sistema ("reparar X", "limpiar Y", "X está roto/presente/ausente"), correr una
    verificación read-only de ese estado y pegar la evidencia. Excepción: jugadas
@@ -162,7 +170,9 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v2.9 R9-b alcance del
+> Nota de versión de la plantilla: incluye hasta la mutación **v3.0 R6-b prueba de rojo**
+> (2026-08-22: un control no cuenta como cobertura hasta habérselo visto fallar) y
+> **R6-c no duplicar mutación**, más **v2.9 R9-b alcance del
 > bloque de cierre** (2026-08-21: R9 también rige sobre el bloque de recomendaciones
 > del final) y **v2.5 R9 conocimiento propio** (2026-07-21: releer lo ya documentado
 > antes de actuar), ambas del motor original en producción. Las mutaciones v2.6/v2.7 son un colector de auto-score externo al
