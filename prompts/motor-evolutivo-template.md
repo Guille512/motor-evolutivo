@@ -114,14 +114,19 @@ Al cerrar un tramo, responder en ≤5 líneas y hacer append a la bitácora:
 1. ¿Qué jugada eligió {{usuario}}? ¿Por qué ESA? (el tipo, no el caso puntual)
 2. ¿Qué rechazó o ignoró, y qué enseña eso?
 3. ¿Hay una regla nueva que merezca la bitácora? (1 línea accionable)
-4. Cerrar con `Efectividad: X/Y` — **métrica v1.5:**
-   - **1.0** elegida tal como se propuso
+4. Cerrar con `Efectividad: X/Y` — **métrica v1.6:**
+   - **1.0** elegida **con descarte** — el humano eligió un subconjunto del bloque, lo
+     reordenó, o pidió algo distinto: su respuesta trae información que el motor no tenía
+   - **0.75** ACEPTACIÓN EN BLOQUE — devolvió el bloque entero sin descartar ninguna. Es un
+     "dale", y un "dale" mide adherencia, no puntería
    - **0.5** absorbida/reformulada por el humano
    - **0.5★** AUTO-CORREGIDA: R7 la anuló por premisa falsa antes de prod (señal POSITIVA)
    - **0** ignorada/rechazada estando bien fundada
    - **`D` (diferida)** propuesta pero el humano no decidió ni ejecutó en el tramo — **NO
      entra en Y** (no es 0 ni 1.0); se lista aparte en `Diferidas:` (ver paso 5b)
-   PROHIBIDO contar absorbidas como elegidas (satura la curva y la deja sin señal).
+   PROHIBIDO contar absorbidas como elegidas (satura la curva y la deja sin señal). Y ojo con la
+   saturación por la otra puerta: si el humano confía y acepta todo, el 1.0 automático vuelve a
+   dejar la curva sin señal — de ahí el 0.75.
 5. Nombrar SIEMPRE la jugada más floja de la tanda y por qué.
 5b. **Listar `Diferidas:`** — las jugadas `D` del tramo, 1 línea c/u con razón, o `—` si
     ninguna. Entrada sin esta línea = inválida. Las diferidas no penalizan la curva (no

@@ -6,11 +6,30 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **19 approved prompt mutations between 2026-06-10 and 2026-08-22.** Two extra entries
+> **20 approved prompt mutations between 2026-06-10 and 2026-08-24.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
+
+- **v3.1 — approved 2026-08-24:** effectiveness metric raised to **v1.6 — block acceptance**.
+  A play chosen because the human pasted **the whole block back, discarding none** is now worth
+  **0.75**, not 1.0. The full 1.0 is reserved for when they picked a *subset*, reordered it, or
+  asked for something different — that is, when their reply carries information the engine did
+  not already have.
+  *Why:* five consecutive log entries scored ~1.0 (1.0 · 0.92 · 1.0 · 1.0 · 0.96) while the plays
+  themselves were not getting better. The human had simply started pasting the entire "next plays"
+  block back as shorthand for "go ahead", and under v1.4 that reads as "chosen as proposed = 1.0"
+  for every play, every time. This is the **same failure v1.2 already fixed once, returning
+  through a different door**: v1.2 killed saturation from *absorbed* plays, this one is saturation
+  from *block acceptance*. A curve that climbs no matter what is decoration, and the mechanism
+  built to prevent exactly that did not cover this case. Confirmed live, twice over: the message
+  approving this mutation was itself a three-play block pasted back whole, with the mutation
+  inside it.
+  **What it measures:** not the human's trust — the engine's ability to **discriminate between its
+  own plays**. A whole segment at 0.75 means "all of them passed, none stood out", which is honest
+  information. Earning a 1.0 now requires proposing something uneven enough to be worth choosing
+  between.
 
 - **v3.0 — approved 2026-08-22:** R6 (revalidate) extended with **R6-b: proof of red** — a
   control written in the same work chunk (test, self-test, assert, monitor, guard, evidence
