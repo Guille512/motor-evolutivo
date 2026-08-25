@@ -6,11 +6,23 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **20 approved prompt mutations between 2026-06-10 and 2026-08-24.** Two extra entries
+> **23 approved prompt mutations between 2026-06-10 and 2026-08-25.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
+
+- **v3.4 — approved 2026-08-25:** **one block of plays, not two.** The agent had been closing every answer with a second block recommending commands and features of the harness it runs on. That block came from the agent's own config file, not from the engine - and living outside the engine it lost all three filters that make everything else serious: **novelty** (it repeated commands across rounds), **premise-verification** (it once proposed history surgery on a commit that had *already been pushed* - a false premise nobody checked before offering it), and above all **the metric**: it never entered Y, so proposing badly there cost nothing. Those were the most frequent suggestions of all, and the only free ones.
+  The tell that the boundary had already dissolved in practice: twice in a single day the human pasted the *tool* block back rather than the engine's, and it was executed as engine plays with nobody noticing the crossing. The system was insisting on a distinction its user had already erased.
+  v3.4 folds them in - a play whose executor is a harness command goes in "next plays" with its executor tag and scores like any other - and **repeals R9-b** as unnecessary. R9-b was a patch on the symptom, and its own text confessed it: "the gap was not knowledge, it was that the closing block gets drafted last without passing the evidence filter demanded of the body." With one block there is one filter. Its substance (check a recurring task against already-installed scheduled jobs) survives inside R8.
+  **Accepted cost:** the curve will drop, because the most frequent plays start counting. That is the point - v3.1 and v3.2 attacked saturation in *how* things are scored; this one attacks what was never counted at all.
+
+- **v3.3 — approved 2026-08-25:** **two hard rules were claiming the same slot.** R2 said "play 1 is ALWAYS the most concrete pain"; R10 (R11 in the private instance), shipped hours earlier the same day, said "play 1 is the oldest deferral". Both live, both pointing at slot 1, added without either seeing the other - so the tie was settled by the agent's judgment, which is the exact thing a rule exists to prevent.
+  Fixed by **scope, not by a new rule**: R2 now governs the first *new* play; R11 takes slot 1 **only if deferrals exist**, and if none do, it takes nothing and slot 1 returns to R2. Rejected alternatives: raising the cap to 4 plays (inflates the block, the very problem v3.1 and v3.2 came to attack) and listing the deferral separately (removes it from the priority order - i.e. makes it optional again, precisely the failure mode R10 was born from). Same precedent as v2.9 and v3.0: mutate the *scope* of existing rules rather than add another one.
+
+- **v3.2 — approved 2026-08-24:** **a deferred play that nobody picks back up doesn't stay put - it blocks future work (R10).** Nothing forced a deferral to return. It vanished at no cost, and **the effectiveness curve did not penalize it**: Y only counts what was decided, so deferring the uncomfortable RAISED the rate. Hidden saturation - and the `% deferred` signal existed to detect it but had no mechanism behind it.
+  Triggered by signal, not by cadence: `% deferred` over its 30% threshold **three consecutive rounds** (33% - 33% - 36%). The witness case: restoring an expired OAuth credential for a client's calendar, proposed one day, never decided, silently absent from the two following rounds - and three days later that was exactly what made it impossible to close a workflow's firing test.
+  R10: if deferrals exist, play 1 is the oldest one picked back up as-is (max 1, the cap does not rise); one that survives two rounds without a decision leaves the list and is named **blocked, with its blocker** - a deferral that reappears every round forever is noise, not follow-through.
 
 - **v3.1 — approved 2026-08-24:** effectiveness metric raised to **v1.6 — block acceptance**.
   A play chosen because the human pasted **the whole block back, discarding none** is now worth

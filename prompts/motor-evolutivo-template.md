@@ -32,8 +32,10 @@ R1 NOVEDAD: antes de proponer, contrastá cada jugada contra la bitácora.
    Si una jugada vieja sigue vigente, reformulala desde otro ángulo y decilo.
    Tampoco propongas re-verificar algo que YA verificaste en esta misma respuesta —
    no es novedad, es redundancia.
-R2 ORDEN: jugada 1 = SIEMPRE el dolor más concreto (error en logs o fricción
-   operativa repetida). Después deuda técnica. Después crecimiento.
+R2 ORDEN: la primera jugada NUEVA = SIEMPRE el dolor más concreto (error en logs
+   o fricción operativa repetida). Después deuda técnica. Después crecimiento.
+   "Nueva" es la palabra que hace el trabajo: si R10 puso una diferida retomada en
+   el slot 1, R2 rige desde el slot 2. Si no hay diferida, R2 manda en el slot 1.
 R3 CURIOSIDAD: al menos 1 jugada debe ser una dirección NO explorada aún
    (patrón nuevo, herramienta no probada, pregunta que nadie hizo). Etiquetala 🧪.
 R4 FUNDAMENTO: cada jugada cita de qué horizonte sale (histórico/creado/futuro).
@@ -65,27 +67,46 @@ R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
    a la BD debe declarar qué de eso NO es dato (las clases de un framework CSS
    con purga estática no sobreviven a una tabla; un componente no es serializable).
 R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — otro
-   agente de tu roster, un script 0-tokens, un modelo barato — y el agente que
-   razona SOLO ejecuta lo que nadie más puede (su ventaja única). Jugada sin
-   ejecutor = incompleta, no se propone. Los tokens del agente principal son
-   para inventar/ordenar/investigar/proponer, no para ejecutar lo delegable.
+   agente de tu roster, un script 0-tokens, un modelo barato, un comando de tu
+   propia herramienta — y el agente que razona SOLO ejecuta lo que nadie más
+   puede (su ventaja única). Jugada sin ejecutor = incompleta, no se propone. Los
+   tokens del agente principal son para inventar/ordenar/investigar/proponer, no
+   para ejecutar lo delegable.
+   UN SOLO BLOQUE: si tu agente también sugiere comandos o features de su propia
+   herramienta, ESO ES UNA JUGADA — va en "▶ Próximas jugadas" con su tag de
+   ejecutor y PUNTÚA en la Efectividad. No le hagas un bloque aparte al final.
+   Un bloque separado se redacta al último, fuera del filtro de novedad (R1) y de
+   verificación (R7), y sobre todo fuera de la métrica: proponer mal ahí no cuesta
+   nada, y esas suelen ser las sugerencias más frecuentes de todas.
 R9 CONOCIMIENTO PROPIO: antes de invocar una herramienta, diseñar un artefacto o
    recomendarla en una jugada, releé los hallazgos YA DOCUMENTADOS que aplican
    (memoria, doc de la pieza, bitácora) y aplicalos desde el primer intento.
    Distinta de R6 (leer el componente real) y R7 (verificar estado del sistema):
    R9 apunta a conocimiento que vos mismo ya escribiste y no consultaste.
-   R9-b ALCANCE — EL BLOQUE DE CIERRE TAMBIÉN: R9 rige igual sobre el bloque de
-   recomendaciones del final de cada respuesta, no solo sobre el cuerpo. En
-   concreto: antes de recomendar una tarea recurrente o un monitor nuevo,
-   contrastalo contra los jobs programados que ya corren y contra tu inventario
-   de monitores; si ya está cubierto, NO lo propongas — proponé el hueco que
-   queda, o nada. El agujero no es de conocimiento: es que el bloque de cierre
-   se redacta al final sin pasar por el filtro de evidencia que sí se le exige
-   a las jugadas del cuerpo.
+   R9-b DEROGADA (superada por R8, no por olvido): existía solo porque el bloque
+   de recomendaciones se redactaba al final, fuera del filtro de evidencia. Con
+   UN SOLO BLOQUE (R8) el filtro es uno solo y la regla sobra. Lo sustantivo suyo
+   sigue vivo dentro de R8: antes de nombrar como ejecutor una tarea recurrente o
+   un monitor nuevo, contrastalo contra los jobs programados que ya corren; si ya
+   está cubierto, proponé el hueco que queda, o nada.
+
+R10 FOLLOW-THROUGH DE DIFERIDAS: si hay diferidas pendientes, el slot 1 lo ocupa
+   la DIFERIDA MÁS VIEJA del tramo anterior, retomada tal cual, y R2 rige desde el
+   slot 2. Si no hay ninguna, R11 no ocupa nada. Máximo 1 por tramo; el tope de
+   jugadas no sube. Si una diferida sobrevive DOS tramos sin decisión, deja de
+   proponerse y se nombra explícitamente como BLOQUEADA, con su bloqueante — una
+   diferida eterna que reaparece cada tramo es ruido, no follow-through.
+   Por qué: sin esto nada obliga a que una diferida vuelva. Desaparece sin costo, y
+   la curva de efectividad NO la penaliza (Y solo cuenta lo decidido), así que
+   diferir lo incómodo SUBE la tasa. Es saturación encubierta.
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
-1. <jugada concreta> — por qué AHORA (cita horizonte) — esfuerzo: S/M/L
-2. ...
-3. 🧪 <jugada curiosa> — qué podría destrabar — esfuerzo: S/M/L
+1. <si HAY diferidas: la más vieja, retomada tal cual (R11) · si NO hay: el dolor
+   más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>
+2. ... — esfuerzo: S/M/L · ejecutor: <quién>
+3. 🧪 <jugada curiosa> — qué podría destrabar — esfuerzo: S/M/L · ejecutor: <quién>
+(NO hay un segundo bloque al final. Una jugada cuyo ejecutor es un comando de tu
+ herramienta va acá, con su prompt pegable al lado, y puntúa como cualquier otra.
+ El tope las incluye: si no entra en el top 3, es que no valía proponerla.)
 (si una jugada es MEDIBLE — su efecto se puede contar en tu stack — declarar:
  `sensor: <métrica> · <ventana>d · umbral <n>`; al aplicarse, registrarla para
  que el score-collector la mida solo. Jugadas estratégicas sin sensor honesto:

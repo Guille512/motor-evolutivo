@@ -39,7 +39,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 
 **El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
 
-## Las 9 reglas (el corazón)
+## Las 10 reglas (el corazón)
 
 | Regla | Qué hace | De qué error real nació |
 |-------|----------|------------------------|
@@ -52,22 +52,28 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 | **R7 VERIFICAR-PRE** | Antes de proponer "reparar X", verificar que X esté roto de verdad. **R7-b:** antes de dictaminar la propuesta *de otro agente*, leer el código real que toca — y exigir la capacidad nueva antes que la prolijidad | Propuestas de arreglos fantasma sobre memoria desactualizada · veredictos escritos sobre un texto en vez de sobre el código |
 | **R8 ROUTING DE EJECUCIÓN** | Cada jugada nombra su ejecutor más barato capaz; el agente que razona solo hace lo indelegable | Jugadas diferidas por falta de dueño + el agente caro haciendo trabajo barato |
 | **R9 CONOCIMIENTO PROPIO** | Releer lo que vos mismo ya documentaste sobre una herramienta antes de usarla | 3 errores cuyo fix el agente ya tenía escrito y no consultó |
+| **R10 FOLLOW-THROUGH DE DIFERIDAS** | Si hay diferidas, la jugada 1 es la más vieja retomada tal cual; si sobrevive dos tramos sin decisión, sale de la lista nombrada como bloqueada | Diferir lo incómodo SUBÍA la efectividad: la curva solo cuenta lo decidido, así que una jugada diferida desaparecía sin costo |
+
+*(La instancia privada llama **R11** a esta regla: allá el nombre R10 quedó quemado cuando dos sesiones del mismo día propusieron la misma mutación sin verse, y el hueco se dejó a propósito para no invalidar las menciones viejas. Acá va numerada corrida — si arrancás de cero, no heredás la cicatriz ajena.)*
 
 Ninguna regla salió de la teoría. **Todas son cicatrices**: cada una tiene la fecha y el error que la generó en el changelog.
 
-## La métrica (v1.3 — anti-saturación + self-correction)
+## La métrica (v1.6 — anti-saturación, self-correction, diferidas, aceptación en bloque)
 
 Cada cierre de tramo registra en la bitácora qué propuesta se eligió:
 
 | Score | Significado |
 |-------|-------------|
-| **1.0** | Elegida tal como se propuso |
+| **1.0** | Elegida **con descarte** — el humano eligió un subconjunto, lo reordenó, o pidió otra cosa: su respuesta trae información que el motor no tenía |
+| **0.75** | **ACEPTACIÓN EN BLOQUE** — volvió el bloque entero sin descartar ninguna. Eso es un "dale", y un "dale" mide adherencia, no puntería |
 | **0.5** | Absorbida / reformulada por el humano |
 | **0.5★** | **AUTO-CORREGIDA**: R7 anuló la propuesta por premisa falsa ANTES de tocar prod. Señal POSITIVA — el motor cazó su propia mala jugada |
 | **0** | Ignorada o rechazada estando bien fundada |
+| **D** | **DIFERIDA** — propuesta, pero el humano no la decidió ni la ejecutó. **NO** entra en Y (contarla 0 castiga lo que no fue un rechazo; contarla 1.0 infla). Se lista aparte para que no pueda esconderse |
 
-Dos protecciones que aprendimos a los golpes:
+Tres protecciones que aprendimos a los golpes, cada una después de que la curva nos mintiera una vez:
 - **Prohibido contar absorbidas como elegidas** — eso infló nuestra curva a un 93% falso y la dejó sin señal.
+- **Un bloque pegado entero no es puntería** — cinco entradas seguidas dieron ~1.0 sin que las propuestas mejoraran. El humano simplemente había empezado a devolver el bloque completo como forma corta de decir "dale". El mismo fallo que el anterior, por otra puerta.
 - **Toda entrada nombra la propuesta más floja** — una bitácora donde todo sale bien no enseña nada.
 
 ## Resultados reales (no benchmark — producción)
@@ -83,7 +89,7 @@ Dos protecciones que aprendimos a los golpes:
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **20 mutaciones aprobadas** del prompt maestro (v1.0 → v3.1) en ~8 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **23 mutaciones aprobadas** del prompt maestro (v1.0 → v3.4) en ~11 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
@@ -103,6 +109,9 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
   "nada, queda más limpio", el refactor es deuda con otro nombre — y toda propuesta de *mover esta
   config a la base de datos* debe declarar qué parte de eso no es dato (las clases de un framework
   CSS con purga estática no sobreviven a una tabla; un componente no es serializable).
+- **v3.4 - el bloque de sugerencias de herramienta era una regla escapandose a su propia seccion:** el agente cerraba cada respuesta con un segundo bloque recomendando comandos y features del entorno donde corre. Ese bloque venia del archivo de configuracion del agente, no del motor - y al vivir afuera perdia los tres filtros que hacen serio a todo lo demas: novedad (repetia comandos entre tramos), verificacion de premisa (llego a proponer cirugia de historia sobre un commit que **ya estaba pusheado**, premisa falsa que nadie chequeo) y sobre todo la metrica: nunca entraba en Y, asi que proponer mal ahi **no costaba nada**. Son las sugerencias mas frecuentes de todas, y eran las unicas gratis. La senal de que la frontera ya se habia disuelto en la practica: dos veces en un mismo dia el humano pego de vuelta el bloque de *herramientas*, no el del motor, y se ejecuto como jugadas del motor sin que nadie notara el cruce. v3.4 las unifica: una jugada cuyo ejecutor es un comando del entorno va en "proximas jugadas" con su tag de ejecutor, y puntua como cualquier otra. **R9-b queda derogada** por innecesaria - existia solo porque el bloque de cierre se redactaba fuera del filtro de evidencia, cosa que su propio texto admitia; con un solo bloque hay un solo filtro. Lo sustantivo suyo (contrastar una tarea recurrente contra los jobs ya instalados) sobrevive dentro de R8. Costo aceptado: la curva va a BAJAR, porque empiezan a contar las jugadas mas frecuentes. Ese es el punto - v3.1 y v3.2 atacaron la saturacion en *como* se puntua; esta ataca lo que directamente no se contaba.
+- **v3.3 - dos reglas duras reclamaban el mismo lugar, agregadas el mismo dia sin verse:** R2 decia "la jugada 1 es SIEMPRE el dolor mas concreto"; R11, salida horas antes, decia "la jugada 1 es la diferida mas vieja". Las dos vivas, las dos apuntando al slot 1, asi que el empate lo resolvia el criterio del agente - exactamente lo que las reglas existen para evitar. Se arreglo por alcance, no con una regla nueva: R2 pasa a regir la primera jugada **nueva**; R11 toma el slot 1 **solo si hay diferidas**, y si no hay, no toma nada. Alternativas descartadas: subir el tope a 4 jugadas (infla el bloque, que es el problema que v3.1 y v3.2 vinieron a atacar) y listar la diferida aparte (la saca del orden de prioridad, o sea la vuelve opcional otra vez - justo el modo de falla que origino R11).
+- **v3.2 - una diferida que nadie retoma no se queda quieta, bloquea trabajo futuro (R11):** nada obligaba a que una diferida volviera. Desaparecia sin costo, y **la curva de efectividad no la penalizaba** - Y solo cuenta lo decidido, asi que diferir lo incomodo SUBIA la tasa. Saturacion encubierta, y la senal `% diferidas` existia para detectarla pero no tenia ningun mecanismo detras. Disparada por senal, no por cadencia: `% diferidas` sobre el umbral del 30% **tres tramos consecutivos** (33% - 33% - 36%). El caso testigo: restaurar una credencial OAuth vencida del calendario de un cliente, propuesta un dia, nunca decidida, silenciosamente ausente de los dos tramos siguientes - y tres dias despues fue exactamente lo que impidio cerrar la prueba de disparo de un workflow. R11: si hay diferidas, la jugada 1 es la mas vieja retomada tal cual (max 1, el tope no sube); una que sobreviva dos tramos sin decision sale de la lista y se nombra **bloqueada, con su bloqueante** - una diferida que reaparece para siempre es ruido, no follow-through.
 - **v3.1 — la métrica dejó de discriminar, así que cambió la métrica:** cinco entradas seguidas de la bitácora dieron ~1.0 (1.0 · 0.92 · 1.0 · 1.0 · 0.96) sin que las jugadas mejoraran. La razón era mundana: el humano había empezado a pegar el bloque entero de "próximas jugadas" de vuelta como forma corta de decir "dale", y la métrica leía eso como "elegida tal cual = 1.0" para todas, siempre. Es **el mismo fallo que v1.2 ya había arreglado una vez, volviendo por otra puerta** — v1.2 mató la saturación por jugadas *absorbidas*; esta era saturación por *aceptación en bloque*. Métrica v1.6: una jugada aceptada como parte de un bloque entero, sin descartar ninguna, vale **0.75**; el 1.0 completo exige que el humano haya elegido un subconjunto, lo haya reordenado, o pedido otra cosa — una respuesta que traiga información que el motor no tenía. No mide la confianza del humano, mide la capacidad del motor de **discriminar entre sus propias jugadas**: un tramo entero en 0.75 dice honestamente "pasaron todas, no se destacó ninguna". Confirmado en vivo dos veces — el mensaje que aprobó esta mutación era él mismo un bloque de tres jugadas pegado entero, con la mutación adentro.
 - **v3.0 — un control no es cobertura hasta habérselo visto fallar (R6-b):** cuatro veces en dos semanas lo roto era el *instrumento*, y las cuatro tenían su propio test en verde: tests async que nunca esperaban sus promesas; una alarma que el agente había armado él mismo el día anterior; un self-assert que medía aritmética en vez del camino que decía probar; y —el que forzó la regla— el **generador de recibos**, la pieza cuyo trabajo entero es que el PASS lo derive el tooling y no la prosa del agente. Una llamada al shell re-juntaba los argumentos sin volver a citarlos, así que cualquier patrón entre comillas se partía: un control negativo que debía fallar devolvía exit 0. Le había puesto firma de máquina a una afirmación falsa, y nunca había tenido self-test. R6-b: un control escrito en el mismo tramo no es cobertura hasta haber roto a propósito lo que protege y pegado el rojo. **Deliberadamente no es una décima regla** — mismo razonamiento que R9-b: R6 ya cubría la evidencia, solo faltaba su alcance. Sale junto con **R6-c** (releer las mutaciones pendientes antes de proponer una nueva), que existe porque *esta misma mutación fue propuesta dos veces el mismo día por dos sesiones que no podían verse* — una mutación duplicada infla la misma señal de "patrón repetido" que usa para justificarse.
 - **v2.9 — el bloque de cierre también cuenta (R9-b):** R9 ya exigía releer lo que el agente había documentado antes de actuar — pero solo se aplicaba al cuerpo de la respuesta. Las dos o tres recomendaciones de herramientas que se agregan al final de cada respuesta se redactaban al último, fuera de ese filtro. El mismo antipatrón tres veces: recomendar una vigilancia recurrente para algo que ya cubría un job programado instalado (autorretractada al ejecutarla; consolidada en memoria once días después; y propuesta de nuevo — esta vez *elegida por el usuario* antes de retractarse). R9-b extiende el alcance: toda tarea recurrente o monitor nuevo que se recomiende se contrasta contra los jobs que ya corren antes de ofrecerlo; si ya está cubierto, se propone el hueco que queda o nada. **Deliberadamente no es una décima regla** — R9 ya cubría el caso, solo faltaba su alcance, y una regla nueva la habría duplicado dejando el efecto sin atribuir. Se mutó una sola cosa: dónde aplica R9.
@@ -117,7 +126,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
 2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R9 aplicadas.
+3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R10 aplicadas.
 4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
 5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
 
@@ -152,7 +161,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 ## Atribución
 
-Si este protocolo (las reglas R1-R9, la métrica v1.3, o el patrón de sensores
+Si este protocolo (las reglas R1-R10, la métrica v1.6, o el patrón de sensores
 de autonomía acotada) aparece en tu propio artículo, charla o producto, un
 link de vuelta acá se agradece — es lo único que mantiene la conexión con
 el origen:

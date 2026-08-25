@@ -40,7 +40,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 
 **The result:** an agent that never proposes the same thing twice, that verifies its assumptions before suggesting a fix, and whose master prompt is measurably better this week than last week — with a git-versioned changelog to prove it.
 
-## The 9 rules (the core of it)
+## The 10 rules (the core of it)
 
 | Rule | What it does | Which real failure it came from |
 |------|---------------|----------------------------------|
@@ -53,22 +53,28 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 | **R7 VERIFY-BEFORE-PROPOSING** | Before proposing "fix X," verify X is actually broken. **R7-b:** before ruling on *another agent's* proposal, read the real code it touches — and demand the new capability before the tidiness | Phantom-fix proposals based on stale memory · verdicts written about a text instead of the codebase |
 | **R8 EXECUTION ROUTING** | Every proposal names its cheapest capable executor; the reasoning agent only does what nobody else can | Plays deferred for lack of an owner + the expensive agent doing cheap work |
 | **R9 OWN KNOWLEDGE** | Re-read what you already wrote down about a tool before using it | 3 errors the agent already had the documented fix for, unconsulted |
+| **R10 DEFERRED FOLLOW-THROUGH** | If anything was deferred, play 1 is the oldest deferral picked back up as-is; surviving two rounds undecided, it leaves the list named as blocked, with its blocker | Deferring the uncomfortable RAISED effectiveness: the curve only counts what was decided, so a deferred play vanished at no cost |
+
+*(The private instance calls this rule **R11**: there, the name R10 was burned when two sessions on the same day proposed the same mutation without seeing each other, and the gap was left on purpose so older references stay valid. Here it is numbered straight through — if you are starting fresh, you do not inherit someone else's scar.)*
 
 None of these rules came from theory. **They're all scars** — each one has the date and the failure that caused it in the changelog.
 
-## The metric (v1.3 — anti-saturation + self-correction)
+## The metric (v1.6 — anti-saturation, self-correction, deferrals, block acceptance)
 
 Every closed task chunk logs which proposal was picked:
 
 | Score | Meaning |
 |-------|---------|
-| **1.0** | Chosen exactly as proposed |
+| **1.0** | Chosen **with discard** — the human picked a subset, reordered it, or asked for something else: their reply carries information the engine did not have |
+| **0.75** | **BLOCK ACCEPTANCE** — the whole block came back with nothing discarded. That is a "go ahead", and a "go ahead" measures adherence, not aim |
 | **0.5** | Absorbed / reworded by the human |
 | **0.5★** | **SELF-CORRECTED**: R7 nulled the proposal on a false premise BEFORE touching prod. A POSITIVE signal — the engine caught its own bad move |
 | **0** | Ignored or rejected while well-founded |
+| **D** | **DEFERRED** — proposed, but the human neither decided nor executed it. Does **not** enter Y (counting it 0 punishes what was not a rejection; counting it 1.0 inflates). Listed separately so it cannot hide |
 
-Two protections we learned the hard way:
+Three protections we learned the hard way, each after the curve lied to us once:
 - **Absorbed proposals must never count as chosen** — that inflated our curve to a false 93% and left it with zero signal.
+- **A whole block pasted back is not a bullseye** — five entries in a row scored ~1.0 while the proposals were not getting better. The human had simply started returning the entire block as shorthand for "go ahead". Same failure as the first one, through a different door.
 - **Every logbook entry names the weakest proposal** — a logbook where everything looks great teaches nothing.
 
 ## Real results (not a benchmark — production)
@@ -83,7 +89,7 @@ Two protections we learned the hard way:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **20 approved mutations** of the master prompt (v1.0 → v3.1) in ~8 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
+- **23 approved mutations** of the master prompt (v1.0 → v3.4) in ~11 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
@@ -103,6 +109,9 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
   cleaner", the refactor is debt under another name — and any *move this config into the
   database* proposal must declare what part of it isn't data (a CSS framework's classes don't
   survive static purging from a table; a component isn't serializable).
+- **v3.4 - the tool-suggestion block was a rule escaping into its own section:** the agent closed every answer with a second block recommending commands and features of the harness it runs on. That block came from the agent's config file, not from the engine - and living outside the engine it lost all three filters that make everything else serious: novelty (it repeated commands across rounds), premise-verification (it once proposed history surgery on a commit that had **already been pushed**, a false premise nobody checked), and above all the metric - it never entered Y, so proposing badly there **cost nothing**. Those are the most frequent suggestions of all, and the only ones that were free. The tell that the boundary had already dissolved in practice: twice in one day the human pasted the *tool* block back, not the engine's, and it was executed as engine plays with nobody noticing the crossing. v3.4 folds them in: a play whose executor is a harness command goes in "next plays" with its executor tag, and scores like any other. **R9-b is repealed** as unnecessary - it existed only because the closing block was drafted outside the evidence filter, which its own text admitted; with one block there is one filter. Its substance (check a recurring task against already-installed jobs) survives inside R8. Accepted cost: the curve will DROP, because the most frequent plays start counting. That is the point - v3.1 and v3.2 attacked saturation in *how* things are scored; this one attacks what was never counted at all.
+- **v3.3 - two hard rules were claiming the same slot, added the same day without seeing each other:** R2 said "play 1 is ALWAYS the most concrete pain"; R11, shipped hours earlier, said "play 1 is the oldest deferral". Both live, both pointing at slot 1, so the tie was settled by the agent's judgment - the exact thing rules exist to prevent. Fixed by scope, not by a new rule: R2 now governs the first **new** play; R11 takes slot 1 **only if deferrals exist**, and if none do it takes nothing. Rejected alternatives: raising the cap to 4 plays (inflates the block, which is the problem v3.1 and v3.2 came to attack) and listing the deferral separately (removes it from the priority order, i.e. makes it optional again - precisely the failure mode R11 was born from).
+- **v3.2 - a deferred play that nobody picks back up doesn't stay put, it blocks future work (R11):** nothing forced a deferral to return. It vanished at no cost, and **the effectiveness curve did not penalize it** - Y only counts what was decided, so deferring the uncomfortable RAISED the rate. Hidden saturation, and the `% deferred` signal existed to detect it but had no mechanism behind it. Triggered by signal, not by cadence: `% deferred` over the 30% threshold **three consecutive rounds** (33% - 33% - 36%). The witness case: restoring an expired OAuth credential for a client's calendar, proposed one day, never decided, silently absent from the two following rounds - and three days later it was exactly what made it impossible to close a workflow's firing test. R11: if deferrals exist, play 1 is the oldest one picked back up as-is (max 1, the cap does not rise); one surviving two rounds without a decision leaves the list and is named **blocked, with its blocker** - a deferral that reappears forever is noise, not follow-through.
 - **v3.1 — the metric stopped discriminating, so the metric changed:** five consecutive log entries scored ~1.0 (1.0 · 0.92 · 1.0 · 1.0 · 0.96) while the plays themselves were not getting better. The reason was mundane: the human had started pasting the entire "next plays" block back as shorthand for "go ahead", and the metric read that as "chosen exactly as proposed = 1.0" for every play, every time. This is the **same failure v1.2 already fixed once, returning through a different door** — v1.2 killed saturation from *absorbed* plays; this was saturation from *block acceptance*. Metric v1.6: a play accepted as part of a whole block, with nothing discarded, is worth **0.75**; the full 1.0 requires that the human picked a subset, reordered it, or asked for something else — a reply carrying information the engine did not already have. It does not measure the human's trust, it measures the engine's ability to **discriminate between its own plays**: a whole segment at 0.75 honestly says "all passed, none stood out". Confirmed live twice over — the message approving this mutation was itself a three-play block pasted back whole, with the mutation inside it.
 - **v3.0 — a control isn't coverage until you've seen it fail (R6-b):** four times in two weeks the broken thing was the *instrument*, and all four had their own test passing: async tests that never awaited their promises; an alarm the agent had armed itself the day before; a self-assert that measured arithmetic instead of the path it claimed to exercise; and — the one that forced the rule — the **receipt generator**, the piece whose entire job is to make a PASS derive from tooling instead of from the agent's prose. A shell call was re-joining arguments without re-quoting them, so any quoted pattern got split: a negative control that must fail returned exit 0. It had put a machine signature on a false statement, and it had never had a self-test at all. R6-b: a control written in the same session is not coverage until you have broken what it protects on purpose and pasted the red. **Deliberately not a tenth rule** — same reasoning as R9-b: R6 already covered evidence, only its scope was missing. Shipped alongside **R6-c** (re-read pending mutations before proposing a new one), which exists because *this very mutation was proposed twice on the same day by two sessions that couldn't see each other* — a duplicated mutation inflates the same "repeated pattern" signal it uses to justify itself.
 - **v2.9 — the closing block counts too (R9-b):** R9 already required re-reading what the agent had written down before acting — but it was only ever applied to the body of a response. The two or three tool recommendations appended at the end of every answer were drafted last, outside that filter. Same antipattern three times: recommending a recurring watch for something an already-installed scheduled job covered (self-retracted on execution; consolidated into memory eleven days later; then proposed again — and this time *chosen by the user* before being retracted). R9-b extends the scope: any recommended recurring task or new monitor gets contrasted against the jobs already running before it's offered; if it's covered, propose the remaining gap or nothing. **Deliberately not a tenth rule** — R9 already covered the case, only its scope was missing, and a new rule would have duplicated it and made the effect unattributable. One thing mutated: where R9 applies.
@@ -117,7 +126,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 1. **Copy** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) into your repo and fill in the `{{placeholders}}` (agent name, project, where your roadmap lives).
 2. **Create the logbook** — a `learnings/aprendizajes.md` file with the template's header (or copy [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R9 already applied.
+3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R10 already applied.
 4. **When you close the chunk:** paste the `reflexión-de-cierre` sub-prompt (≤5 lines) → append to the logbook with `Efectividad: X/Y`.
 5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
@@ -152,7 +161,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 ## Attribution
 
-If this protocol (the R1-R9 rule set, the v1.3 metric, or the bounded-autonomy
+If this protocol (the R1-R10 rule set, the v1.6 metric, or the bounded-autonomy
 sensor pattern) shows up in your own writeup, talk, or product, a link back
 here is appreciated — it's what keeps this tied to where it came from:
 
