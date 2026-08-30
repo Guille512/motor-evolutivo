@@ -66,6 +66,15 @@ R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
    limpio", es deuda con otro nombre; (b) toda propuesta de mover configuración
    a la BD debe declarar qué de eso NO es dato (las clases de un framework CSS
    con purga estática no sobreviven a una tabla; un componente no es serializable).
+   R7-c CONTRATO → TERRENO: antes de escribir un handoff o ticket que instruye
+   mecanismos concretos en una máquina ajena (correr un git pull, ejecutar un
+   script, reiniciar un servicio, tocar un directorio de deploy), verificar por
+   efecto read-only que ese mecanismo existe allá — la ruta existe, es un repo
+   git, el script hace lo que el contrato dice. Sin esa verificación el handoff
+   es prosa; con ella, es procedimiento. Origen: 4ª ocurrencia del patrón — un
+   directorio de deploy que no era repo git, un env de producción pisado en
+   pleno redeploy, IDs de credencial inventados en un JSON de handoff, un
+   respaldo automático apuntado a la carpeta de docs durante meses.
 R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — otro
    agente de tu roster, un script 0-tokens, un modelo barato, un comando de tu
    propia herramienta — y el agente que razona SOLO ejecuta lo que nadie más

@@ -6,12 +6,13 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **23 approved prompt mutations between 2026-06-10 and 2026-08-25.** Two extra entries
+> **24 approved prompt mutations between 2026-06-10 and 2026-08-30.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
 
+- **v3.5 — approved 2026-08-30:** **contract → terrain.** Before writing a handoff or ticket that instructs concrete mechanisms on a remote machine - run a `git pull`, execute this script, restart that service, sync into that deploy directory - verify by read-only effect that the mechanism actually exists there: the path exists, it is a git repo, the script does what the contract says. Fourth time this failure surfaced in five weeks: a deploy directory that was not a git repo; a production environment file overwritten mid-redeploy; a handoff JSON carrying invented credential IDs; an automatic backup pointed at a hand-edited docs folder for months. Without the check a handoff is prose; with it, a procedure. The contract names the terrain; the terrain decides whether the contract is executable.
 - **v3.4 — approved 2026-08-25:** **one block of plays, not two.** The agent had been closing every answer with a second block recommending commands and features of the harness it runs on. That block came from the agent's own config file, not from the engine - and living outside the engine it lost all three filters that make everything else serious: **novelty** (it repeated commands across rounds), **premise-verification** (it once proposed history surgery on a commit that had *already been pushed* - a false premise nobody checked before offering it), and above all **the metric**: it never entered Y, so proposing badly there cost nothing. Those were the most frequent suggestions of all, and the only free ones.
   The tell that the boundary had already dissolved in practice: twice in a single day the human pasted the *tool* block back rather than the engine's, and it was executed as engine plays with nobody noticing the crossing. The system was insisting on a distinction the workflow had already erased.
   v3.4 folds them in - a play whose executor is a harness command goes in "next plays" with its executor tag and scores like any other - and **repeals R9-b** as unnecessary. R9-b was a patch on the symptom, and its own text confessed it: "the gap was not knowledge, it was that the closing block gets drafted last without passing the evidence filter demanded of the body." With one block there is one filter. Its substance (check a recurring task against already-installed scheduled jobs) survives inside R8.
