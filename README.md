@@ -40,7 +40,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 
 **The result:** an agent that never proposes the same thing twice, that verifies its assumptions before suggesting a fix, and whose master prompt is measurably better this week than last week — with a git-versioned changelog to prove it.
 
-## The 10 rules (the core of it)
+## The 11 rules (the core of it)
 
 | Rule | What it does | Which real failure it came from |
 |------|---------------|----------------------------------|
@@ -54,8 +54,8 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 | **R8 EXECUTION ROUTING** | Every proposal names its cheapest capable executor; the reasoning agent only does what nobody else can | Plays deferred for lack of an owner + the expensive agent doing cheap work |
 | **R9 OWN KNOWLEDGE** | Re-read what you already wrote down about a tool before using it | 3 errors the agent already had the documented fix for, unconsulted |
 | **R10 DEFERRED FOLLOW-THROUGH** | If anything was deferred, play 1 is the oldest deferral picked back up as-is; surviving two rounds undecided, it leaves the list named as blocked, with its blocker | Deferring the uncomfortable RAISED effectiveness: the curve only counts what was decided, so a deferred play vanished at no cost |
+| **R11 ADVERSARIAL TEST** | A play delivering code/script/monitoring must have its verification vary at least one dimension the play did NOT name — an axis orthogonal to the change | 2 of 2 same-day deliveries shipped with a green self-test and the bug still alive: the cases only varied what the ticket asked to fix |
 
-*(The private instance calls this rule **R11**: there, the name R10 was burned when two sessions on the same day proposed the same mutation without seeing each other, and the gap was left on purpose so older references stay valid. Here it is numbered straight through — if you are starting fresh, you do not inherit someone else's scar.)*
 
 None of these rules came from theory. **They're all scars** — each one has the date and the failure that caused it in the changelog.
 
@@ -89,7 +89,7 @@ Three protections we learned the hard way, each after the curve lied to us once:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **24 approved mutations** of the master prompt (v1.0 → v3.5) in ~11 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
+- **25 approved mutations** of the master prompt (v1.0 → v3.6) in ~11 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
@@ -109,6 +109,8 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
   cleaner", the refactor is debt under another name — and any *move this config into the
   database* proposal must declare what part of it isn't data (a CSS framework's classes don't
   survive static purging from a table; a component isn't serializable).
+- **v3.6 - a green that only exercises what the play named proves nothing (R11):** if a play delivers code, a script or a monitor, its verification must vary at least one dimension the play did not name. Triggered by 2 of 2 same-day deliveries from another agent in the roster, both landing with a green self-test and the bug still alive: a dedupe tested only with the collection in input order (breaks with the order reversed); a validator tested only with the field absent (passes with the field present but invalid, and fails open); a zone filter tested with a single zone (collides across scopes). The delivery contract ("every delivery ships a negative control") was being met in all three cases - the hole was not the absence of the control, it was its design. The clause that makes it bite: the varied dimension has to be an orthogonal axis to the change (order, shape of the malformed input, isolation scope, null/boundary state) - without it the rule is satisfied by a cosmetic dimension and catches nothing. Deliberately not a 3-case checklist: those are the bugs of that one day; as an obligation they become ceremony and leave out the next dimension.
+
 - **v3.5 - a contract naming terrain nobody verified:** before writing a handoff or ticket that instructs concrete mechanisms on a remote machine - run a git pull, execute this script, restart that service, sync into that deploy directory - verify by read-only effect that the mechanism actually exists there: the path exists, it is a git repo, the script does what the contract says. Fourth occurrence of the pattern in five weeks: a deploy directory that was not a git repo; a production environment file overwritten mid-redeploy; a handoff JSON carrying invented credential IDs; an automatic backup pointed at a hand-edited docs folder for months. Without that check a handoff is prose; with it, it is a procedure. The contract names the terrain; the terrain decides whether the contract is executable.
 - **v3.4 - the tool-suggestion block was a rule escaping into its own section:** the agent closed every answer with a second block recommending commands and features of the harness it runs on. That block came from the agent's config file, not from the engine - and living outside the engine it lost all three filters that make everything else serious: novelty (it repeated commands across rounds), premise-verification (it once proposed history surgery on a commit that had **already been pushed**, a false premise nobody checked), and above all the metric - it never entered Y, so proposing badly there **cost nothing**. Those are the most frequent suggestions of all, and the only ones that were free. The tell that the boundary had already dissolved in practice: twice in one day the human pasted the *tool* block back, not the engine's, and it was executed as engine plays with nobody noticing the crossing. v3.4 folds them in: a play whose executor is a harness command goes in "next plays" with its executor tag, and scores like any other. **R9-b is repealed** as unnecessary - it existed only because the closing block was drafted outside the evidence filter, which its own text admitted; with one block there is one filter. Its substance (check a recurring task against already-installed jobs) survives inside R8. Accepted cost: the curve will DROP, because the most frequent plays start counting. That is the point - v3.1 and v3.2 attacked saturation in *how* things are scored; this one attacks what was never counted at all.
 - **v3.3 - two hard rules were claiming the same slot, added the same day without seeing each other:** R2 said "play 1 is ALWAYS the most concrete pain"; R11, shipped hours earlier, said "play 1 is the oldest deferral". Both live, both pointing at slot 1, so the tie was settled by the agent's judgment - the exact thing rules exist to prevent. Fixed by scope, not by a new rule: R2 now governs the first **new** play; R11 takes slot 1 **only if deferrals exist**, and if none do it takes nothing. Rejected alternatives: raising the cap to 4 plays (inflates the block, which is the problem v3.1 and v3.2 came to attack) and listing the deferral separately (removes it from the priority order, i.e. makes it optional again - precisely the failure mode R11 was born from).
@@ -127,7 +129,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 1. **Copy** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) into your repo and fill in the `{{placeholders}}` (agent name, project, where your roadmap lives).
 2. **Create the logbook** — a `learnings/aprendizajes.md` file with the template's header (or copy [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R10 already applied.
+3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R11 already applied.
 4. **When you close the chunk:** paste the `reflexión-de-cierre` sub-prompt (≤5 lines) → append to the logbook with `Efectividad: X/Y`.
 5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
@@ -162,7 +164,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 ## Attribution
 
-If this protocol (the R1-R10 rule set, the v1.6 metric, or the bounded-autonomy
+If this protocol (the R1-R11 rule set, the v1.6 metric, or the bounded-autonomy
 sensor pattern) shows up in your own writeup, talk, or product, a link back
 here is appreciated — it's what keeps this tied to where it came from:
 

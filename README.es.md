@@ -39,7 +39,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 
 **El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
 
-## Las 10 reglas (el corazón)
+## Las 11 reglas (el corazón)
 
 | Regla | Qué hace | De qué error real nació |
 |-------|----------|------------------------|
@@ -53,8 +53,8 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 | **R8 ROUTING DE EJECUCIÓN** | Cada jugada nombra su ejecutor más barato capaz; el agente que razona solo hace lo indelegable | Jugadas diferidas por falta de dueño + el agente caro haciendo trabajo barato |
 | **R9 CONOCIMIENTO PROPIO** | Releer lo que vos mismo ya documentaste sobre una herramienta antes de usarla | 3 errores cuyo fix el agente ya tenía escrito y no consultó |
 | **R10 FOLLOW-THROUGH DE DIFERIDAS** | Si hay diferidas, la jugada 1 es la más vieja retomada tal cual; si sobrevive dos tramos sin decisión, sale de la lista nombrada como bloqueada | Diferir lo incómodo SUBÍA la efectividad: la curva solo cuenta lo decidido, así que una jugada diferida desaparecía sin costo |
+| **R11 TEST ADVERSARIAL** | La verificación de una jugada que entrega código/script/vigilancia tiene que variar al menos una dimensión que la jugada NO nombró — un eje ortogonal al cambio | 2 de 2 entregas del mismo día con self-test en verde y el bug vivo: los casos solo variaban lo que el ticket pedía arreglar |
 
-*(La instancia privada llama **R11** a esta regla: allá el nombre R10 quedó quemado cuando dos sesiones del mismo día propusieron la misma mutación sin verse, y el hueco se dejó a propósito para no invalidar las menciones viejas. Acá va numerada corrida — si arrancás de cero, no heredás la cicatriz ajena.)*
 
 Ninguna regla salió de la teoría. **Todas son cicatrices**: cada una tiene la fecha y el error que la generó en el changelog.
 
@@ -89,7 +89,7 @@ Tres protecciones que aprendimos a los golpes, cada una después de que la curva
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **24 mutaciones aprobadas** del prompt maestro (v1.0 → v3.5) en ~11 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **25 mutaciones aprobadas** del prompt maestro (v1.0 → v3.6) en ~11 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
@@ -109,6 +109,8 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
   "nada, queda más limpio", el refactor es deuda con otro nombre — y toda propuesta de *mover esta
   config a la base de datos* debe declarar qué parte de eso no es dato (las clases de un framework
   CSS con purga estática no sobreviven a una tabla; un componente no es serializable).
+- **v3.6 - un verde que solo ejercita lo que la jugada nombro no prueba nada (R11):** si una jugada entrega codigo, script o vigilancia, su verificacion tiene que variar al menos una dimension que la jugada NO nombro. Gatillada por 2 de 2 entregas del mismo dia de otro agente del roster, las dos con self-test en verde y el bug vivo: un dedupe probado solo con la lista en el orden de entrada (rompe con el orden invertido); un validador probado solo con el campo ausente (pasa con el campo presente pero invalido, y falla abierto); un filtro de zona probado con una sola zona (colisiona entre ambitos). El contrato de entrega ("toda entrega trae control negativo") se cumplia en los tres casos - el agujero no era la ausencia del control, era su diseno. La clausula que la hace morder: la dimension variada tiene que ser un eje ORTOGONAL al cambio (orden, forma del dato invalido, ambito de aislamiento, borde/nulo) - sin eso la regla se satisface con una dimension cosmetica y no caza nada. Deliberadamente no es un checklist de 3 casos obligatorios: son los bugs de ESE dia; como obligacion se vuelven ceremonia y dejan afuera la proxima dimension.
+
 - **v3.5 - un contrato que nombra terreno que nadie verifico:** antes de escribir un handoff o ticket que instruye mecanismos concretos en una maquina ajena (correr un git pull, ejecutar un script, reiniciar un servicio, tocar un directorio de deploy), verificar por efecto read-only que ese mecanismo existe alla - la ruta existe, es un repo git, el script hace lo que el contrato dice. Cuarta ocurrencia del patron en cinco semanas: un directorio de deploy que no era repo git, un env de produccion pisado en pleno redeploy, IDs de credencial inventados en un JSON de handoff, y un respaldo automatico apuntado a la carpeta de docs durante meses. Sin esa verificacion el handoff es prosa; con ella, es procedimiento. El contrato nombra el terreno; el terreno decide si el contrato es ejecutable.
 - **v3.4 - el bloque de sugerencias de herramienta era una regla escapandose a su propia seccion:** el agente cerraba cada respuesta con un segundo bloque recomendando comandos y features del entorno donde corre. Ese bloque venia del archivo de configuracion del agente, no del motor - y al vivir afuera perdia los tres filtros que hacen serio a todo lo demas: novedad (repetia comandos entre tramos), verificacion de premisa (llego a proponer cirugia de historia sobre un commit que **ya estaba pusheado**, premisa falsa que nadie chequeo) y sobre todo la metrica: nunca entraba en Y, asi que proponer mal ahi **no costaba nada**. Son las sugerencias mas frecuentes de todas, y eran las unicas gratis. La senal de que la frontera ya se habia disuelto en la practica: dos veces en un mismo dia el humano pego de vuelta el bloque de *herramientas*, no el del motor, y se ejecuto como jugadas del motor sin que nadie notara el cruce. v3.4 las unifica: una jugada cuyo ejecutor es un comando del entorno va en "proximas jugadas" con su tag de ejecutor, y puntua como cualquier otra. **R9-b queda derogada** por innecesaria - existia solo porque el bloque de cierre se redactaba fuera del filtro de evidencia, cosa que su propio texto admitia; con un solo bloque hay un solo filtro. Lo sustantivo suyo (contrastar una tarea recurrente contra los jobs ya instalados) sobrevive dentro de R8. Costo aceptado: la curva va a BAJAR, porque empiezan a contar las jugadas mas frecuentes. Ese es el punto - v3.1 y v3.2 atacaron la saturacion en *como* se puntua; esta ataca lo que directamente no se contaba.
 - **v3.3 - dos reglas duras reclamaban el mismo lugar, agregadas el mismo dia sin verse:** R2 decia "la jugada 1 es SIEMPRE el dolor mas concreto"; R11, salida horas antes, decia "la jugada 1 es la diferida mas vieja". Las dos vivas, las dos apuntando al slot 1, asi que el empate lo resolvia el criterio del agente - exactamente lo que las reglas existen para evitar. Se arreglo por alcance, no con una regla nueva: R2 pasa a regir la primera jugada **nueva**; R11 toma el slot 1 **solo si hay diferidas**, y si no hay, no toma nada. Alternativas descartadas: subir el tope a 4 jugadas (infla el bloque, que es el problema que v3.1 y v3.2 vinieron a atacar) y listar la diferida aparte (la saca del orden de prioridad, o sea la vuelve opcional otra vez - justo el modo de falla que origino R11).
@@ -127,7 +129,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
 2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R10 aplicadas.
+3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R11 aplicadas.
 4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
 5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
 
@@ -162,7 +164,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 ## Atribución
 
-Si este protocolo (las reglas R1-R10, la métrica v1.6, o el patrón de sensores
+Si este protocolo (las reglas R1-R11, la métrica v1.6, o el patrón de sensores
 de autonomía acotada) aparece en tu propio artículo, charla o producto, un
 link de vuelta acá se agradece — es lo único que mantiene la conexión con
 el origen:

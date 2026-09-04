@@ -101,15 +101,33 @@ R9 CONOCIMIENTO PROPIO: antes de invocar una herramienta, diseñar un artefacto 
 
 R10 FOLLOW-THROUGH DE DIFERIDAS: si hay diferidas pendientes, el slot 1 lo ocupa
    la DIFERIDA MÁS VIEJA del tramo anterior, retomada tal cual, y R2 rige desde el
-   slot 2. Si no hay ninguna, R11 no ocupa nada. Máximo 1 por tramo; el tope de
+   slot 2. Si no hay ninguna, R10 no ocupa nada. Máximo 1 por tramo; el tope de
    jugadas no sube. Si una diferida sobrevive DOS tramos sin decisión, deja de
    proponerse y se nombra explícitamente como BLOQUEADA, con su bloqueante — una
    diferida eterna que reaparece cada tramo es ruido, no follow-through.
    Por qué: sin esto nada obliga a que una diferida vuelva. Desaparece sin costo, y
    la curva de efectividad NO la penaliza (Y solo cuenta lo decidido), así que
    diferir lo incómodo SUBE la tasa. Es saturación encubierta.
+
+R11 TEST ADVERSARIAL: si una jugada entrega código, script o vigilancia, su
+   verificación tiene que **variar al menos una dimensión que la jugada NO
+   nombró**. Una jugada que se declara verificada probando solo lo que ella misma
+   pidió arreglar no está verificada: mide que el fix hace lo que dice, no que el
+   sistema quedó sano. **El bug vive en la dimensión que quedó constante.**
+   La dimensión tiene que ser un EJE ORTOGONAL al cambio (orden dentro de la
+   colección, forma del dato malformado, ámbito de aislamiento, estado nulo o de
+   borde) — sin esa cláusula la regla se satisface al pie de la letra con una
+   dimensión cosmética y no caza nada.
+   Se aplica en 1 línea al cerrar: nombrá la dimensión que quedó constante en todos
+   los casos probados. Si no la podés nombrar, no la buscaste.
+   Por qué: sin esto una jugada puede puntuar 1.0 en la Efectividad usando su propio
+   verde como evidencia — el motor auto-certificándose. Es el mismo agujero que R6-b
+   (PRUEBA DE ROJO) tapó para las vigilancias, un nivel más arriba: R6-b exige haber
+   VISTO el rojo de un control; R11 exige que el control PUEDA ponerse rojo por algo
+   que nadie pidió mirar.
+
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
-1. <si HAY diferidas: la más vieja, retomada tal cual (R11) · si NO hay: el dolor
+1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
    más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>
 2. ... — esfuerzo: S/M/L · ejecutor: <quién>
 3. 🧪 <jugada curiosa> — qué podría destrabar — esfuerzo: S/M/L · ejecutor: <quién>
