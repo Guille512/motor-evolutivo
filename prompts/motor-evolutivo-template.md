@@ -126,6 +126,24 @@ R11 TEST ADVERSARIAL: si una jugada entrega código, script o vigilancia, su
    VISTO el rojo de un control; R11 exige que el control PUEDA ponerse rojo por algo
    que nadie pidió mirar.
 
+R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no se
+   propone. Tres formas de relleno que ya se midieron:
+   (a) desvío con hilo activo — si hay un hilo prioritario con reloj corriendo
+   (incidente, migración, entrega), NO se ofrece menú: se cierra con el siguiente
+   paso de ESE hilo. Una jugada de otro frente al pie de la tanda es ruido que el
+   humano ignora;
+   (b) relleno estructural — no nombrar una jugada para descartarla en el mismo
+   turno, no ofrecer dos donde una es subconjunto de la otra, no proponer una
+   auditoría/revisión adversarial ANTES de que la decisión de fondo esté sobre la
+   mesa (se ofrece al confirmar, no antes), y no meter tareas del propio motor
+   (métricas, reflexión) que corren de oficio en su ventana;
+   (c) la jugada que convierte cierra el hilo abierto — el bloque rinde máximo
+   cuando cada jugada cierra algo que el tramo dejó colgando, no cuando abre features.
+   Por qué: las tres estaban consolidadas desde hacía meses (3-4 entradas cada una)
+   en la memoria de otra herramienta que el motor no lee al abrir — 1 de 8 había
+   llegado al prompt maestro, y solo como caso especial. Una regla que el ejecutor
+   no lee no gobierna nada.
+
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
    más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>
