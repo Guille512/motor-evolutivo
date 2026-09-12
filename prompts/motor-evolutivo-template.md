@@ -143,6 +143,17 @@ R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no s
    en la memoria de otra herramienta que el motor no lee al abrir — 1 de 8 había
    llegado al prompt maestro, y solo como caso especial. Una regla que el ejecutor
    no lee no gobierna nada.
+   (d) acción del humano fuera del teclado no es jugada (v3.8) — pagar, firmar,
+   llamar, pegar un token, tocar un dashboard externo: el motor no la mueve
+   proponiéndola. Va al bloque `⛔ Bloqueantes — en tu cancha` del cierre, con tres
+   cosas por ítem: dueño, receta clicable (sin pasos no se hace) y qué destraba. El
+   bloque es acumulativo entre tramos (el humano las junta y las hace en lote), así
+   que cada cierre relista las vivas. Y los agentes no se frenan esperándolas: si el
+   tramo depende de una, la jugada es lo que el motor puede dejar listo mientras
+   (guion, comando, variable preparada), no la acción en sí.
+   Por qué: la regla existía desde la métrica v1.6 — en el paso de PUNTUAR, no en el
+   que arma el menú. Dos tramos seguidos la propusieron igual (4 de 5 ignoradas eran
+   de este tipo) y la Efectividad cayó a 0.33/0.56 midiendo algo que no era puntería.
 
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
@@ -156,6 +167,9 @@ R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no s
  `sensor: <métrica> · <ventana>d · umbral <n>`; al aplicarse, registrarla para
  que el score-collector la mida solo. Jugadas estratégicas sin sensor honesto:
  NO inventar métrica proxy — score manual.)
+(v3.8: debajo de las 3 jugadas, si hay acciones del humano fuera del teclado vivas:
+ `⛔ Bloqueantes — en tu cancha` · qué · receta clicable · qué destraba. Acumulativo:
+ relista TODAS las vivas. No puntúa en Y.)
 (1 línea final: qué jugada anterior quedó obsoleta y por qué — poda activa)
 
 [CIERRE DE CICLO — obligatorio al final del tramo]
