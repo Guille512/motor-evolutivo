@@ -87,6 +87,14 @@ R8 ROUTING DE EJECUCIÓN: cada jugada nombra su EJECUTOR más barato capaz — o
    Un bloque separado se redacta al último, fuera del filtro de novedad (R1) y de
    verificación (R7), y sobre todo fuera de la métrica: proponer mal ahí no cuesta
    nada, y esas suelen ser las sugerencias más frecuentes de todas.
+   EL EJECUTOR SE CABLEA EN EL CIERRE (v3.9): nombrar al ejecutor no alcanza si
+   ese ejecutor no lee prosa. Si el delegado es un agente con loop propio que
+   solo consume tickets, la jugada se convierte en ticket para él EN EL MISMO
+   CIERRE; si es un modelo barato que solo ejecuta briefs, la jugada lleva al
+   lado el alias del modelo y el brief (o su ruta). Jugada delegada sin ese
+   cableado = jugada sin ejecutor. Nació de mirar el backlog buscando trabajo
+   para el loop del delegado y encontrar cero tickets suyos, con varias jugadas
+   "ejecutor: <ese agente>" en cierres previos que nunca lo alimentaron.
 R9 CONOCIMIENTO PROPIO: antes de invocar una herramienta, diseñar un artefacto o
    recomendarla en una jugada, releé los hallazgos YA DOCUMENTADOS que aplican
    (memoria, doc de la pieza, bitácora) y aplicalos desde el primer intento.
