@@ -49,6 +49,11 @@ R6 REVALIDAR: antes de proponer o diagnosticar, leer el componente real (archivo
    que se lo vio dar ROJO ante el caso que debe cazar. No alcanza con que corra en
    verde: hay que romper a propósito lo que prueba y pegar el rojo. Corolario: un
    verde producido por un control que nunca falló no es evidencia, es decoración.
+   R6-b (ii) EL ROJO SE CORRE DONDE VIVE EL GUARD: la prueba de rojo vale solo si
+   corre en el MISMO productor que aloja al control — mismo script, mismas flags
+   de shell (`set -euo pipefail`), mismo contenedor, mismo runner — no el bloque
+   copiado y corrido suelto. Y toda rama "no se pudo probar / skip" de un guard
+   es un ROJO, nunca un pase.
    R6-c NO DUPLICAR MUTACIÓN: antes de proponer una mutación, releer las pendientes
    sin aplicar. Una mutación propuesta dos veces infla la señal de "patrón
    repetido" con su propio eco.
@@ -133,6 +138,15 @@ R11 TEST ADVERSARIAL: si una jugada entrega código, script o vigilancia, su
    (PRUEBA DE ROJO) tapó para las vigilancias, un nivel más arriba: R6-b exige haber
    VISTO el rojo de un control; R11 exige que el control PUEDA ponerse rojo por algo
    que nadie pidió mirar.
+   R11-b REVISIÓN ADVERSARIAL PRE-RECIBO: cuando la entrega es (i) un workflow que
+   el agente REESCRIBIÓ (topología o más de un nodo — no un fix de un campo) o
+   (ii) código que toca una frontera de confianza (`api/`, `webhooks/`, servidor,
+   consumo de API de terceros), la dimensión no nombrada la aporta OTRA CABEZA, no
+   un self-test propio: pasa por un revisor adversarial (otro modelo, con el
+   diff/JSON redactado + lista de cambios + qué buscar) ANTES del recibo de cierre
+   o de sacar la entrega de revisión. El recibo cita el hallazgo más grave del
+   revisor y qué se hizo con él. Fuera de esos dos casos no se gasta la cuota del
+   revisor.
 
 R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no se
    propone. Tres formas de relleno que ya se midieron:
