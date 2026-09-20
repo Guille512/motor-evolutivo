@@ -6,6 +6,33 @@
 >
 > La bitácora (`learnings/aprendizajes.md`) es la memoria; este archivo es el genoma.
 
+plantilla: v3.11 ({{commit_de_la_plantilla}})
+serie: {{PREFIJO}}-NNN
+agente: {{nombre_agente}}
+
+> Las tres líneas de arriba son la cabecera que lee `scripts/check-instancia.js`
+> (`node check-instancia.js prompts/motor-evolutivo.md --skill <tu SKILL.md>`):
+> `plantilla:` = de qué versión del mecanismo derivás (informativa — actualizar el
+> mecanismo es decisión tuya, no automática); `serie:` = el prefijo de tus entradas
+> de bitácora (`ORION-`, `SIMBA-`, `HERMES-`…), único por instancia; el guard falla
+> si aparecen entradas de otra serie en tu bitácora — así se detecta que otro agente
+> escribió en tu motor aunque compartan máquina y usuario.
+>
+> **Federación (si hay varios agentes):** un mecanismo (este repo), N instancias
+> (cada una con su cabecera, sus reglas, su bitácora, su changelog desde v1.0).
+> Ninguna instancia sincroniza contenido con otra. Una regla cruza de una instancia
+> a otra solo si tiene nombre, viene con el incidente que la produjo, ya cazó algo
+> real al menos una vez — **y en la instancia que la recibe entra como hipótesis
+> (`importada de <serie>, sin caza propia`) hasta que cace en ese dominio.**
+>
+> **Modo reactivo (agentes que ejecutan pedidos y no abren tramos — un relay, un
+> ejecutor de tickets):** la unidad del ciclo no es el tramo sino el ticket. No hay
+> "▶ Próximas jugadas": el bloque se omite entero, no se rellena. La métrica es la
+> misma de siempre aplicada al ticket — `Efectividad: cerrados sin rebote / cerrados`
+> (rebote = el pedido volvió corregido o reabierto). Reflexión-de-cierre por ticket.
+> Las reglas nacen de los rebotes reales, no se importan. Si el agente ve algo de
+> paso en su dominio, lo manda como ticket normal: no puntúa, no es una jugada.
+
 ---
 
 ## EL PROMPT MAESTRO (copiar/invocar tal cual)
@@ -277,14 +304,5 @@ Si la rechaza, registrar el porqué en la bitácora (eso también es señal).
   (github.com/{{tu_usuario}}/motor-evolutivo). Las mutaciones siguientes se registran
   acá: `vX.Y — fecha — qué cambió y POR QUÉ (con la evidencia de bitácora que lo fundó)`.
 
-> Nota de versión de la plantilla: incluye hasta la mutación **v3.0 R6-b prueba de rojo**
-> (2026-08-22: un control no cuenta como cobertura hasta habérselo visto fallar) y
-> **R6-c no duplicar mutación**, más **v2.9 R9-b alcance del
-> bloque de cierre** (2026-08-21: R9 también rige sobre el bloque de recomendaciones
-> del final) y **v2.5 R9 conocimiento propio** (2026-07-21: releer lo ya documentado
-> antes de actuar), ambas del motor original en producción. Las mutaciones v2.6/v2.7 son un colector de auto-score externo al
-> prompt (deriva dimensiones del baseline de agentes desde heartbeats y tickets
-> reales) — no se portan como plantilla porque dependen de tu propio stack; el
-> patrón está descrito en el README y en `docs/CHANGELOG-HISTORY.md`.
 > Tu instancia arranca en v1.0 propia y evoluciona por su cuenta — el
 > changelog de arriba es TUYO, no el del original.

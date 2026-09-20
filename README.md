@@ -141,6 +141,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 **Optional — only if you use Claude Code:**
 - Install [`skill/SKILL.md`](skill/SKILL.md) into `~/.claude/skills/motor-evolutivo/` — the full cycle (steps 3-5) runs by just saying "motor," no manual copy/paste.
+- **Instance guard:** `node scripts/check-instancia.js prompts/motor-evolutivo.md --skill ~/.claude/skills/motor-evolutivo/SKILL.md` — fails on leftover placeholders, missing `plantilla:/serie:` header, missing bitácora or entries from another series, or a skill that points at a different instance. Run it (or cron it) before trusting your own engine. Several agents: one mechanism (this repo), N instances, one series each — see the template header (federation + reactive mode).
 - **0-token sensors:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) is plain Node.js — runs in any terminal (not just Claude Code) via cron/Task Scheduler, measures the outcome of applied proposals (via your stack's API) and alerts over Telegram, without spending a single LLM token.
 
 ## Repo structure
@@ -148,6 +149,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 ```
 ├── prompts/motor-evolutivo-template.md   ← THE master prompt (generic template)
 ├── skill/SKILL.md                        ← Claude Code cycle operator
+├── scripts/check-instancia.js            ← instance guard (self-test 13/13)
 ├── scripts/watch-sensores.js             ← 0-token score-collector (optional)
 ├── examples/bitacora-ejemplo.md          ← example logbook with sample entries
 └── docs/arquitectura-autonomia.md        ← the full v2.0 plan (what to automate and what NOT to)

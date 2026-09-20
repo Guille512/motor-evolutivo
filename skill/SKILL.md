@@ -22,8 +22,17 @@ aprende es un prompt estático con otro nombre.
 
 ## Fuentes de verdad (leer/escribir AHÍ, no duplicar acá)
 
+**Esta skill opera UNA instancia: la de `serie: {{PREFIJO}}-NNN` en las rutas de
+abajo.** Si dos agentes comparten máquina y usuario (mismo `~/.claude/`), cada uno
+instala su copia con nombre propio (`motor-simba`, `motor-hermes`) y rutas absolutas
+a SU instancia — nunca `<repo>` sin resolver ni una carpeta que no sea la suya. Antes
+de escribir en la bitácora, confirmá que la serie de tu cabecera es la que estás
+por usar; si no coincide, esta no es tu skill. El guard lo verifica sin confiar en
+vos: `node scripts/check-instancia.js <prompts/motor-evolutivo.md> --skill <este archivo>`
+falla si esta skill no nombra esa instancia o si la bitácora tiene entradas ajenas.
+
 ```
-<repo>/prompts/motor-evolutivo.md    ← prompt maestro + reglas R1-R7 + changelog
+<repo>/prompts/motor-evolutivo.md    ← prompt maestro + reglas + changelog (rutas ABSOLUTAS al instalar)
 <repo>/learnings/aprendizajes.md     ← bitácora (reglas consolidadas + entradas
                                         con Efectividad: X/Y)
 <repo>/scripts/.state/sensores.json  ← sensores de jugadas medibles (opcional)

@@ -141,6 +141,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 **Opcional — solo si usás Claude Code:**
 - Instalá [`skill/SKILL.md`](skill/SKILL.md) en `~/.claude/skills/motor-evolutivo/` — el ciclo completo (pasos 3-5) se opera diciendo "motor", sin copiar/pegar nada a mano.
+- **Guard de instancia:** `node scripts/check-instancia.js prompts/motor-evolutivo.md --skill ~/.claude/skills/motor-evolutivo/SKILL.md` — falla si quedaron placeholders, falta la cabecera `plantilla:/serie:`, la bitácora no existe o tiene entradas de otra serie, o la skill apunta a otra instancia. Es lo que corre cada agente (o su cron) antes de confiar en su propio motor. Con varios agentes: un mecanismo (este repo), N instancias, cada una con su serie — ver la cabecera de la plantilla (federación + modo reactivo).
 - **Sensores 0-token:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) es Node.js puro — corre en cualquier terminal (no solo Claude Code) por cron/Task Scheduler, mide el resultado de las propuestas aplicadas (vía API de tu stack) y avisa por Telegram, sin gastar tokens de ningún LLM.
 
 ## Estructura del repo
@@ -148,6 +149,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 ```
 ├── prompts/motor-evolutivo-template.md   ← EL prompt maestro (plantilla genérica)
 ├── skill/SKILL.md                        ← operador del ciclo para Claude Code
+├── scripts/check-instancia.js            ← guard: ¿mi instancia está sana? (self-test 13/13)
 ├── scripts/watch-sensores.js             ← score-collector 0-token (opcional)
 ├── examples/bitacora-ejemplo.md          ← bitácora con entradas de ejemplo
 └── docs/arquitectura-autonomia.md        ← el plan v2.0 completo (qué automatizar y qué NO)
