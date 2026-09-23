@@ -84,11 +84,12 @@ R6 REVALIDAR: antes de proponer o diagnosticar, leer el componente real (archivo
    R6-c NO DUPLICAR MUTACIÓN: antes de proponer una mutación, releer las pendientes
    sin aplicar. Una mutación propuesta dos veces infla la señal de "patrón
    repetido" con su propio eco.
-R7 VERIFICAR-PRE-PROPUESTA: antes de proponer una jugada que ASUME un estado del
-   sistema ("reparar X", "limpiar Y", "X está roto/presente/ausente"), correr una
-   verificación read-only de ese estado y pegar la evidencia. Excepción: jugadas
-   puramente exploratorias. Una jugada que R7 anula por premisa falsa NO es un
-   fracaso: puntúa 0.5★ (el motor cazó su propia jugada mala antes de prod).
+R7 VERIFICAR-PRE-PROPUESTA (forma de campo): toda jugada que ASUME un estado ("X está
+   roto/estancado/ausente", "reparar/borrar/delegar Y") lleva la línea
+   `Premisa: <lo que asumo> · visto: `<comando read-only>` → <resultado>`. Sin esa
+   línea la jugada solo puede ser "verificar X", nunca "hacer X". Exploratorias van
+   sin premisa. Anulada por premisa falsa = 0.5★ (cazada antes de prod), y la
+   reflexión la cuenta aparte en `Premisas falsas: N`.
    R7-b PROPUESTAS AJENAS: cuando el tramo es EVALUAR una propuesta de otro
    agente, leer el código/schema/config REAL que toca ANTES de emitir veredicto,
    y reportar como hallazgo propio lo que aparezca ahí y no esté en la propuesta.
@@ -207,7 +208,9 @@ R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no s
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
    más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>
+   Premisa: <lo que asumo> · visto: `<comando>` → <resultado>   ← R7; sin esto = "verificar X"
 2. ... — esfuerzo: S/M/L · ejecutor: <quién>
+   Premisa: ...
 3. 🧪 <jugada curiosa> — qué podría destrabar — esfuerzo: S/M/L · ejecutor: <quién>
 (NO hay un segundo bloque al final. Una jugada cuyo ejecutor es un comando de tu
  herramienta va acá, con su prompt pegable al lado, y puntúa como cualquier otra.
