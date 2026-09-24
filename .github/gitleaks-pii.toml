@@ -1,0 +1,42 @@
+# Reglas de PII de pacientes (incidente #581, 23/09/2026). Extiende las reglas por defecto.
+# Lo usa el hook global ~/.git-hooks/pre-commit y el del workspace (scripts/pii-guard.sh).
+# Go regexp (RE2): sin lookaround; los limites van como grupo no capturante.
+
+title = "gitleaks PII pacientes AR"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "pii-telefono-ar"
+description = "Celular argentino (paciente/lead) en texto plano"
+regex = '''(?:^|[^0-9-])((?:\+?54[ -]?9?[ -]?)?\(?0?(?:11|2\d{2,3}|3\d{2,3})\)?[ -]?(?:15[ -]?)?\d{3,4}[ -]?\d{4})(?:[^0-9]|$)'''
+secretGroup = 1
+entropy = 0
+keywords = ["11", "2", "3"]
+
+[[rules]]
+id = "pii-dni"
+description = "DNI junto a su clave (dni/documento)"
+regex = '''(?i)(?:dni|documento)["']?\s*[:=]\s*["']?(\d{1,2}\.?\d{3}\.?\d{3})(?:[^0-9]|$)'''
+secretGroup = 1
+keywords = ["dni", "documento"]
+
+[[rules]]
+id = "pii-registro-paciente"
+description = "Registro con paciente + telefono en la misma linea (dump de turnos/pacientes)"
+regex = '''(?i)"(?:paciente|nombre|patientname)"\s*:\s*"[^"]{3,}"[^\n{}]{0,200}"(?:telefono|phone|celular)"\s*:\s*"[^"]{6,}"'''
+keywords = ["paciente", "nombre", "patientname"]
+
+[allowlist]
+description = "Numeros propios y comerciales publicos; artefactos"
+# Repo publico: sin allowlist de numeros propios (publicarla seria filtrarlos).
+# Tests con telefonos inventados a proposito (fixtures). Riesgo aceptado: si alguien pega
+# un numero real en un test, este guard no lo ve.
+paths = [
+  '''(^|[\\/])node_modules[\\/]''',
+  '''package-lock\.json$''',
+  '''\.gitleaks-pii\.toml$''',
+  '''(^|[\\/])test-[^\\/]+\.(ts|js|mjs)$''',
+  '''\.(test|spec)\.(ts|tsx|js)$''',
+]
