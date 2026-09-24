@@ -9,7 +9,7 @@
 
 **A master prompt that improves itself with real evidence — no retraining, no infrastructure, no datasets.**
 
-![Motor Evolutivo cycle diagram](docs/demo.png)
+![Motor Evolutivo cycle, animated](docs/motor-evolutivo-loop.gif)
 
 > 🖥️ **Works in any terminal, with any LLM agent.** The core is plain
 > markdown — it doesn't depend on Claude Code. It runs the same way with
@@ -142,7 +142,12 @@ into the conversation with your agent, whatever terminal or chat you use.
 5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
 **Optional — only if you use Claude Code:**
-- Install [`skill/SKILL.md`](skill/SKILL.md) into `~/.claude/skills/motor-evolutivo/` — the full cycle (steps 3-5) runs by just saying "motor," no manual copy/paste.
+- **Install as a plugin (two commands):**
+  ```
+  /plugin marketplace add Guille512/motor-evolutivo
+  /plugin install motor-evolutivo@motor-evolutivo
+  ```
+  The full cycle (steps 3-5) then runs by just saying "motor," no manual copy/paste. Third-party marketplaces don't auto-update by default: run `/plugin marketplace update` to get new versions. Prefer files? Copy [`skills/motor-evolutivo/`](skills/motor-evolutivo/SKILL.md) into `~/.claude/skills/`.
 - **Instance guard:** `node scripts/check-instancia.js prompts/motor-evolutivo.md --skill ~/.claude/skills/motor-evolutivo/SKILL.md` — fails on leftover placeholders, missing `plantilla:/serie:` header, missing bitácora or entries from another series, or a skill that points at a different instance. Run it (or cron it) before trusting your own engine. Several agents: one mechanism (this repo), N instances, one series each — see the template header (federation + reactive mode).
 - **0-token sensors:** [`scripts/watch-sensores.js`](scripts/watch-sensores.js) is plain Node.js — runs in any terminal (not just Claude Code) via cron/Task Scheduler, measures the outcome of applied proposals (via your stack's API) and alerts over Telegram, without spending a single LLM token.
 
@@ -150,7 +155,8 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 ```
 ├── prompts/motor-evolutivo-template.md   ← THE master prompt (generic template)
-├── skill/SKILL.md                        ← Claude Code cycle operator
+├── skills/motor-evolutivo/SKILL.md      ← Claude Code cycle operator
+├── .claude-plugin/                       ← plugin + marketplace manifest
 ├── scripts/check-instancia.js            ← instance guard (self-test 13/13)
 ├── scripts/watch-sensores.js             ← 0-token score-collector (optional)
 ├── examples/bitacora-ejemplo.md          ← example logbook with sample entries

@@ -1,0 +1,16 @@
+{
+  "name": "motor-evolutivo",
+  "description": "Motor Evolutivo: a self-improving master prompt protocol for AI agents.",
+  "owner": {
+    "name": "Guillermo Fernández",
+    "url": "https://github.com/Guille512"
+  },
+  "plugins": [
+    {
+      "name": "motor-evolutivo",
+      "source": "./",
+      "description": "A markdown protocol that makes your AI agent improve its own master prompt from real failures, human-approved, with a dated changelog.",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -111,7 +111,10 @@ Repetidas = fallo de R1 → candidata directa a mutación.
 ## Instalación (Claude Code)
 
 ```
-cp -r skill/ ~/.claude/skills/motor-evolutivo/
+/plugin marketplace add Guille512/motor-evolutivo
+/plugin install motor-evolutivo@motor-evolutivo
 ```
+
+O a mano: `cp -r skills/motor-evolutivo/ ~/.claude/skills/`
 
 Después, en cualquier sesión: decí **"motor"** y la skill opera el ciclo.

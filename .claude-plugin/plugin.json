@@ -1,0 +1,18 @@
+{
+  "name": "motor-evolutivo",
+  "description": "A markdown protocol that makes your AI agent improve its own master prompt from real failures, human-approved, with a dated changelog.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Guillermo Fernández",
+    "url": "https://github.com/Guille512"
+  },
+  "homepage": "https://github.com/Guille512/motor-evolutivo",
+  "repository": "https://github.com/Guille512/motor-evolutivo",
+  "license": "MIT",
+  "keywords": [
+    "prompt-engineering",
+    "self-improvement",
+    "agents",
+    "reflection"
+  ]
+}

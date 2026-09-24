@@ -14,7 +14,7 @@ no server, no account, no user data collected by the project itself.
   any third party. Read it end to end before running it — it's under 200
   lines, plain `https` calls, no hidden dependencies.
 - No signup, no API key, no account required to use the core protocol
-  (`prompts/`, `skill/`, `examples/`). The sensor script is 100% optional.
+  (`prompts/`, `skills/`, `examples/`). The sensor script is 100% optional.
 
 ## Reporting a concern
 
