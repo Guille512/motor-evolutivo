@@ -40,7 +40,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 
 **The result:** an agent that never proposes the same thing twice, that verifies its assumptions before suggesting a fix, and whose master prompt is measurably better this week than last week — with a git-versioned changelog to prove it.
 
-## The 12 rules (the core of it)
+## The 13 rules (the core of it)
 
 | Rule | What it does | Which real failure it came from |
 |------|---------------|----------------------------------|
@@ -56,6 +56,7 @@ Motor Evolutivo is something else: a **markdown protocol** that turns your LLM a
 | **R10 DEFERRED FOLLOW-THROUGH** | If anything was deferred, play 1 is the oldest deferral picked back up as-is; surviving two rounds undecided, it leaves the list named as blocked, with its blocker | Deferring the uncomfortable RAISED effectiveness: the curve only counts what was decided, so a deferred play vanished at no cost |
 | **R11 ADVERSARIAL TEST** | A play delivering code/script/monitoring must have its verification vary at least one dimension the play did NOT name — an axis orthogonal to the change | 2 of 2 same-day deliveries shipped with a green self-test and the bug still alive: the cases only varied what the ticket asked to fix |
 | **R12 MENU HYGIENE** | A play takes one of 3 slots; if it doesn't earn it, it isn't proposed. No detour while a priority thread has the clock running; no structural filler (self-discarded plays, subset pairs, mistimed audits, the engine's own chores); the play that converts closes the open thread; off-keyboard human actions are not plays - they go to a cumulative blockers block with a recipe, and the engine never stalls on them | 8 rules about the play menu had been consolidated for months in another tool's memory the engine never reads at open — 1 of 8 had reached the master prompt |
+| **R13 AUTONOMOUS LOOP** | Autonomous mode is the repeat command of your tool (in Claude Code, `/loop`) and the engine recommends it on its own, as a normal play with a pasteable prompt. Three forms (dynamic by default, fixed interval only to watch something on a clock, cloud if it must outlive the session); YES when there is a queue of ≥2 chained reversible plays, a long background job or an expiring resource; NO when waiting on another agent, a single step, something a scheduled watcher already covers, or anything irreversible or customer-facing. The recipe carries goal + limits + cap, and 5 rules for operating it (read real state each pass, document as you apply, never the irreversible, stop when nothing useful is left, the close-out reflection still runs) | The criterion lived in a memory file of another tool that the engine never reads at open; R8 said "check the loop against scheduled tasks" but nothing said when to propose one or how to ask for it well |
 
 
 None of these rules came from theory. **They're all scars** — each one has the date and the failure that caused it in the changelog.
@@ -90,7 +91,7 @@ Three protections we learned the hard way, each after the curve lied to us once:
 
 Running since June 2026 across 3 production projects (N8N automation for dental clinics + an agency):
 
-- **33 approved mutations** of the master prompt (v1.0 → v3.14) in ~15 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
+- **34 approved mutations** of the master prompt (v1.0 → v3.15) in ~17 weeks, each grounded in real executions — [full dated history, sanitized →](docs/CHANGELOG-HISTORY.md)
 - **The engine catches itself:** an effectiveness curve saturated at 93% triggered a redefinition of its own metric. R6 failed against its own author → it produced its own operative version. The metric was punishing the best safety mechanism → it corrected itself the following window.
 - **~50% effectiveness curve** post-correction — and that's the healthy number: 100% means your metric is broken, not that your agent is perfect.
 - **v2.0a — bounded autonomy:** measurable proposals declare a `sensor:` (metric + window + threshold), and a 0-token script measures them on its own and proposes the score with evidence. Principle: **automate the EVIDENCE, never the DECISION.**
@@ -110,6 +111,7 @@ Running since June 2026 across 3 production projects (N8N automation for dental 
   cleaner", the refactor is debt under another name — and any *move this config into the
   database* proposal must declare what part of it isn't data (a CSS framework's classes don't
   survive static purging from a table; a component isn't serializable).
+- **v3.15 - autonomous mode gets its own rule (R13):** the engine now recommends the repeat command on its own instead of waiting to be asked, and says how to ask for it: three forms, when YES and when NO, a three-part recipe (goal + limits + cap) and five rules for operating it. Triggered by a 3-pass autonomous loop that loaded 213 companies with phone numbers, 24 emails and closed 2 tickets without touching a single customer; the human then asked how autonomous mode is switched on and wanted the engine to know. It does not change the shape of a play or the metric, so the v3.13 measurement stays attributable. Measured as the Effectiveness of the loop play like any other; proposed and ignored 3 rounds in a row means it is filler (R12) and drops to "only when the human says keep going". It authorizes nothing past the hand brake.
 - **v3.14 - a headline principle above the rules: stay at the top of the AI race:** not another R-rule but the north that orders the plays — each pass looks for a new AI capability that would improve today's work, tried with a time cap and an abandon criterion. Refined the same day: without both, the failure mode is dispersion (half-done deliveries for every new tool), so what is measured is verified improvements, not novelties.
 - **v3.13 - the premise becomes a field of the play, not a rule to remember (R7):** a 14-day audit, cross-checked by an independent model, found an unverified premise behind 11 of 25 weak plays — with R7 written weeks earlier — and effectiveness flat at ~80% across 6 mutations. More text wasn't changing behavior, so the output shape changed instead: each play carries `Premise · seen: <command> → <result>`, or it can only be "verify X". The rule got shorter, not longer.
 - **v3.12 - self-knowledge that missed the first pass gets a guard, not just a memory (R9-c):** content carrying backslashes, `\n`, backticks or `$` (a Windows-style path, a regex, a script with escaped code) has to be written with the editor's direct write, or from a temp file the script reads — never inline through an intermediate shell (`printf`, an unquoted heredoc, `python -c`, `node -e` with the text baked in, `sed` with the path inside the pattern). Each shell layer consumes one layer of escaping and executes any backtick along the way; the destination comes out mutilated and the command's own green says nothing about it. The finding had already been written down as knowledge (R9, v2.5) and still fired five times in 48 hours: two inline scripts mangled mid-write, a scheduled-task wrapper left without its path separators that then failed silently, a path committed with its separators eaten, a regex edit that silently stopped matching. Extends the scope of R9 (precedent v2.9/v3.0), no new rule — but this time the memory alone didn't hold, so it also ships **its own pre-execution guard**: a check that inspects the exact shell command before it runs and blocks the pattern. Proof of red: sabotaged against 14 real commands pulled from the session that produced it (5 that must block, 9 legitimate ones that must not) — caught a false positive in its own first draft (a quoted heredoc piped to an interpreter doesn't get expanded by the shell and was being blocked anyway) and a blind spot (a multi-line write hid its own backslashes past the point the check was reading up to). Fixed both, then watched it block, live, the exact kind of command it exists to stop.
@@ -138,7 +140,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 1. **Copy** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) into your repo and fill in the `{{placeholders}}` (agent name, project, where your roadmap lives).
 2. **Create the logbook** — a `learnings/aprendizajes.md` file with the template's header (or copy [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R12 already applied.
+3. **When you open a work session:** paste the master prompt to your agent (Claude Code, Cursor, aider, ChatGPT, whatever you use) → it gives you up to 3 proposals with rules R1-R13 already applied.
 4. **When you close the chunk:** paste the `reflexión-de-cierre` sub-prompt (≤5 lines) → append to the logbook with `Efectividad: X/Y`.
 5. **Once a week:** the mutator proposes ONE improvement to the master prompt based on the last 5 reflections. You approve it → changelog. You reject it → that's also signal, and it goes in the logbook too.
 
@@ -181,7 +183,7 @@ into the conversation with your agent, whatever terminal or chat you use.
 
 ## Attribution
 
-If this protocol (the R1-R12 rule set, the v1.6 metric, or the bounded-autonomy
+If this protocol (the R1-R13 rule set, the v1.6 metric, or the bounded-autonomy
 sensor pattern) shows up in your own writeup, talk, or product, a link back
 here is appreciated — it's what keeps this tied to where it came from:
 

@@ -205,6 +205,34 @@ R12 HIGIENE DEL MENÚ: una jugada ocupa uno de 3 lugares; si no los merece, no s
    que arma el menú. Dos tramos seguidos la propusieron igual (4 de 5 ignoradas eran
    de este tipo) y la Efectividad cayó a 0.33/0.56 midiendo algo que no era puntería.
 
+R13 LOOP AUTÓNOMO: el modo autónomo es el comando de repetición de tu herramienta
+   (en Claude Code, `/loop`) — no hay otro interruptor. El motor lo recomienda solo, como
+   una jugada normal con su prompt pegable; el humano lo activa pegándolo.
+   (a) Tres formas y cuál ofrecer: *dinámico* (sin intervalo: el modelo decide el ritmo y
+   las tareas en segundo plano lo despiertan al terminar) es el default para "seguí
+   avanzando"; *intervalo fijo* solo para vigilar algo que cambia por reloj; *en la nube*
+   si tiene que seguir con la sesión cerrada. Ninguno corre con la máquina apagada.
+   (b) CUÁNDO SÍ: cola de ≥2 jugadas REVERSIBLES encadenadas · tarea larga en segundo
+   plano que ningún otro loop cubre · recurso con vencimiento que conviene gastar ya ·
+   el humano dijo "seguí" o "tenés libertad".
+   (c) CUÁNDO NO: esperar a otro agente que ya tiene su propio loop · tarea de un solo
+   paso · algo ya cubierto por una vigía o tarea programada (contraste obligatorio, R8) ·
+   cualquier cosa irreversible o que llegue a un tercero (mensajes a clientes,
+   credenciales, activar bots, infra de producción, abrir algo a internet).
+   (d) La receta lleva 3 partes o no se ofrece: objetivo + el porqué · LÍMITES explícitos
+   (qué NO toca, y "si dudás, lo dejás anotado en el ticket") · tope y criterio de
+   abandono.
+   (e) Cinco reglas de OPERAR un loop: 1. cada vuelta arranca leyendo el estado real, no
+   la memoria de la vuelta anterior · 2. lo que el loop aplica se documenta en el ticket
+   al aplicarse, no al final · 3. lo irreversible NO lo hace: queda como pendiente con
+   receta en `⛔ Bloqueantes` · 4. si no hay jugada útil, para y dice el resultado en
+   texto visible · 5. el cierre de tramo corre igual la reflexión: un loop no exime la
+   bitácora.
+   Por qué: R8 ya decía "contrastar el loop con las tareas programadas", pero nada decía
+   cuándo proponerlo ni cómo pedirlo bien; el criterio vivía en la memoria de otra
+   herramienta que el motor no lee al abrir. Una regla que el ejecutor no lee no gobierna
+   nada.
+
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
    más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>
