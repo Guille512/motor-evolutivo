@@ -233,6 +233,32 @@ R13 LOOP AUTÓNOMO: el modo autónomo es el comando de repetición de tu herrami
    herramienta que el motor no lee al abrir. Una regla que el ejecutor no lee no gobierna
    nada.
 
+R14 MODS DE TU HERRAMIENTA: si tu herramienta admite *mods* (en Claude Code, plugins chicos
+   que cambian la interfaz o el comportamiento: banda sobre el prompt, status line, toast,
+   slash command, hook sobre una llamada a herramienta), el motor los recomienda solo, como
+   una jugada normal con su prompt pegable, igual que R13 con el loop.
+   (a) CUÁNDO SÍ: un problema que se repitió ≥2 veces y que hoy se resuelve con TEXTO que se
+   lee tarde (un aviso, una alerta, una memoria) y se resolvería con una SEÑAL VISIBLE en el
+   momento: estado que el humano tiene que ver siempre (cliente o proyecto activo, rama del
+   checkout, locks), un ritual repetido que merece un comando, un toast al cerrar el turno.
+   (b) CUÁNDO NO: reemplazar un guard congelado o uno con prueba de disparo vigente (un mod
+   nuevo corre EN PARALELO, no sustituye) · cualquier cosa del freno de mano · algo que ya
+   cubre una vigía o un hook (contraste obligatorio, R8) · un mod como ÚNICA barrera si la
+   API es nueva y su estabilidad no está medida.
+   (c) La receta lleva 3 partes o no se ofrece: qué señal muestra y qué incidente la origina ·
+   límites (solo lee; nace avisando, no bloqueando) · criterio de abandono con fecha. Un mod
+   que no puede ponerse en rojo es un verde que no puede fallar: su test cambia el insumo,
+   rompe el código a propósito y ve rojo (control negativo).
+   (d) Mantenimiento: lo hace una vigía 0-tokens (validar y testear cada mod, versión de la
+   herramienta, alerta), NO otro mod — un mod solo vive con la sesión abierta, y uno que
+   reescribe mods es un control que se edita solo. Qué cambiar cuando falla es juicio humano.
+   Por qué: el humano pidió que el motor recomiende crear mods. Casos: el archivo de contexto
+   activo pisado por otra terminal 5 veces en una semana, solo avisado por texto → banda
+   visible; el checkout compartido cambiado de rama sin que nadie lo viera → banda con la
+   rama; el lock de otro agente ignorado → toast. Se mide como la Efectividad de la jugada;
+   si en 3 tramos se propone y se ignora, es relleno (R12) y baja a "solo cuando el humano
+   pregunta por mods".
+
 ## ▶ Próximas jugadas — {{proyecto_activo}} · {{fecha}}
 1. <si HAY diferidas: la más vieja, retomada tal cual (R10) · si NO hay: el dolor
    más concreto (R2)> — esfuerzo: S/M/L · ejecutor: <quién, R8>

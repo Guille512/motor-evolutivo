@@ -39,7 +39,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 
 **El resultado:** un agente que nunca te propone lo mismo dos veces, que verifica sus premisas antes de proponer, y cuyo prompt maestro es mejor esta semana que la anterior — con changelog versionado en git que lo prueba.
 
-## Las 13 reglas (el corazón)
+## Las 14 reglas (el corazón)
 
 | Regla | Qué hace | De qué error real nació |
 |-------|----------|------------------------|
@@ -55,6 +55,7 @@ El Motor Evolutivo es otra cosa: un **protocolo en markdown** que convierte a tu
 | **R10 FOLLOW-THROUGH DE DIFERIDAS** | Si hay diferidas, la jugada 1 es la más vieja retomada tal cual; si sobrevive dos tramos sin decisión, sale de la lista nombrada como bloqueada | Diferir lo incómodo SUBÍA la efectividad: la curva solo cuenta lo decidido, así que una jugada diferida desaparecía sin costo |
 | **R11 TEST ADVERSARIAL** | La verificación de una jugada que entrega código/script/vigilancia tiene que variar al menos una dimensión que la jugada NO nombró — un eje ortogonal al cambio | 2 de 2 entregas del mismo día con self-test en verde y el bug vivo: los casos solo variaban lo que el ticket pedía arreglar |
 | **R12 HIGIENE DEL MENÚ** | Una jugada ocupa uno de 3 lugares; si no lo merece, no se propone. Sin desvíos con un hilo prioritario en curso; sin relleno estructural (jugadas auto-descartadas, pares subconjunto, auditorías mistimed, tareas del propio motor); la jugada que convierte cierra el hilo abierto; las acciones del humano fuera del teclado no son jugadas - van a un bloque acumulativo de bloqueantes con receta, y el motor nunca se frena por ellas | 8 reglas del menú de jugadas llevaban meses consolidadas en la memoria de otra herramienta que el motor no lee al abrir — 1 de 8 había llegado al prompt maestro |
+| **R14 MODS DE LA HERRAMIENTA** | Si tu herramienta admite mods (en Claude Code, plugins chicos que cambian la interfaz o el comportamiento), el motor los recomienda solo, como una jugada normal con su prompt pegable. SÍ cuando un problema se repitió ≥2 veces y hoy se resuelve con texto que se lee tarde, y una señal visible en el momento lo resolvería; NO si reemplazaría un guard congelado o con prueba de disparo vigente (un mod corre en paralelo, no sustituye), algo del freno de mano o algo que ya cubre una vigía. La receta lleva señal + límites (solo lee, avisa antes de bloquear) + fecha de abandono, todo mod entrega un control negativo, y el mantenimiento es una vigía 0-tokens, nunca otro mod | El motor sabía recomendar un loop pero no un mod; una terminal paralela pisó 5 veces en una semana el archivo de contexto activo y la única defensa era un texto leído después del daño |
 | **R13 LOOP AUTÓNOMO** | El modo autónomo es el comando de repetición de tu herramienta (en Claude Code, `/loop`) y el motor lo recomienda solo, como una jugada normal con su prompt pegable. Tres formas (dinámico por defecto, intervalo fijo solo para vigilar algo por reloj, nube si tiene que sobrevivir a la sesión); SÍ cuando hay una cola de ≥2 jugadas reversibles encadenadas, una tarea larga en segundo plano o un recurso que vence; NO si espera a otro agente, es un solo paso, ya lo cubre una vigía, o es irreversible o llega a un cliente. La receta lleva objetivo + límites + tope, y 5 reglas para operarlo (leer el estado real en cada vuelta, documentar al aplicar, nunca lo irreversible, parar si no hay nada útil, la reflexión de cierre corre igual) | El criterio vivía en la memoria de otra herramienta que el motor no lee al abrir; R8 decía "contrastar el loop con las tareas programadas" pero nada decía cuándo proponerlo ni cómo pedirlo bien |
 
 
@@ -91,7 +92,7 @@ Tres protecciones que aprendimos a los golpes, cada una después de que la curva
 
 Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N para clínicas + agencia):
 
-- **34 mutaciones aprobadas** del prompt maestro (v1.0 → v3.15) en ~17 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
+- **35 mutaciones aprobadas** del prompt maestro (v1.0 → v3.17) en ~17 semanas, cada una fundada en ejecuciones reales — [historial completo fechado, sanitizado →](docs/CHANGELOG-HISTORY.md) (en inglés)
 - **El motor se auto-detecta:** la curva de efectividad saturada al 93% disparó la redefinición de su propia métrica. R6 falló contra su propio autor → generó su versión operativa. La métrica castigaba al mejor mecanismo de seguridad → se corrigió sola en la siguiente ventana.
 - **Curva de efectividad ~50%** post-corrección — y eso es lo sano: 100% significa que tu métrica está rota, no que tu agente es perfecto.
 - **v2.0a — autonomía acotada:** las propuestas medibles declaran un `sensor:` (métrica + ventana + umbral) y un script 0-tokens las mide solo y propone el score con evidencia. Principio: **automatizar la EVIDENCIA, nunca la DECISIÓN.**
@@ -111,6 +112,7 @@ Corriendo desde junio 2026 sobre 3 proyectos en producción (automatización N8N
   "nada, queda más limpio", el refactor es deuda con otro nombre — y toda propuesta de *mover esta
   config a la base de datos* debe declarar qué parte de eso no es dato (las clases de un framework
   CSS con purga estática no sobreviven a una tabla; un componente no es serializable).
+- **v3.17 - el motor recomienda mods de la herramienta (R14):** mismo patrón que la regla del loop: una capacidad de la herramienta que el motor no sabía ofrecer. Criterio SÍ/NO, receta de tres partes (señal + límites + fecha de abandono), un control negativo por cada mod (romper el código a propósito, ver rojo, restaurar) y mantenimiento por una vigía 0-tokens en vez de otro mod. Primeros casos: el archivo de contexto activo pisado 5 veces en una semana por una terminal paralela, un checkout compartido cambiado de rama sin que nadie lo viera y el lock de otro agente ignorado. Límite honesto: los tests cubren la lógica de decisión, no el dibujo en sesión, así que los mods solo avisan hasta que exista una prueba de disparo en vivo. Se mide como la Efectividad de la jugada del mod; ignorada 3 tramos seguidos es relleno (R12).
 - **v3.15 - el modo autónomo tiene su propia regla (R13):** el motor ahora recomienda el comando de repetición por su cuenta en vez de esperar que se lo pidan, y dice cómo pedirlo: tres formas, cuándo SÍ y cuándo NO, una receta de tres partes (objetivo + límites + tope) y cinco reglas para operarlo. Disparador: un loop autónomo de 3 vueltas que cargó 213 empresas con teléfono, 24 mails y cerró 2 tickets sin tocar a ningún cliente; el humano preguntó entonces cómo se activa el modo autónomo y pidió que el motor lo sepa. No cambia la forma de la jugada ni la métrica, así que la medición de v3.13 sigue siendo atribuible. Se mide como la Efectividad de la jugada del loop, igual que cualquier otra; si se propone y se ignora 3 tramos seguidos es relleno (R12) y baja a "solo cuando el humano dice seguí". No autoriza nada del freno de mano.
 - **v3.14 - un principio por encima de las reglas: estar en la cima de la carrera de IA:** no es otra regla R sino el norte que ordena las jugadas — cada pasada busca una capacidad de IA nueva que mejore el trabajo de hoy, probada con tope de tiempo y criterio de abandono. Afinada el mismo día: sin ambos, el modo de falla es la dispersión (entregas a medias por cada herramienta nueva), así que se mide cuántas mejoras se verificaron, no cuántas novedades hubo.
 - **v3.13 - la premisa pasa a ser un campo de la jugada, no una regla para acordarse (R7):** una auditoría de 14 días, cruzada con un modelo independiente, encontró una premisa sin verificar detrás de 11 de 25 jugadas flojas — con R7 escrita hacía semanas — y la efectividad plana en ~80 % a través de 6 mutaciones. Más texto no cambiaba la conducta, así que cambió la forma de la salida: cada jugada lleva `Premisa · visto: <comando> → <resultado>`, o solo puede ser "verificar X". La regla quedó más corta, no más larga.
@@ -140,7 +142,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 1. **Copiá** [`prompts/motor-evolutivo-template.md`](prompts/motor-evolutivo-template.md) a tu repo y completá los `{{placeholders}}` (nombre del agente, proyecto, dónde vive tu roadmap).
 2. **Creá la bitácora** — un archivo `learnings/aprendizajes.md` con el header del template (o copiá [`examples/bitacora-ejemplo.md`](examples/bitacora-ejemplo.md)).
-3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R13 aplicadas.
+3. **Al abrir sesión de trabajo:** pegale el prompt maestro a tu agente (Claude Code, Cursor, aider, ChatGPT, el que uses) → te da máx. 3 propuestas con las reglas R1-R14 aplicadas.
 4. **Al cerrar el tramo:** pegale el sub-prompt `reflexión-de-cierre` (≤5 líneas) → append a la bitácora con `Efectividad: X/Y`.
 5. **Una vez por semana:** el mutador propone UNA mejora al prompt maestro basada en las últimas 5 reflexiones. La aprobás → changelog. La rechazás → eso también es señal y va a la bitácora.
 
@@ -183,7 +185,7 @@ en la conversación con tu agente, sea cual sea la terminal o el chat que uses.
 
 ## Atribución
 
-Si este protocolo (las reglas R1-R13, la métrica v1.6, o el patrón de sensores
+Si este protocolo (las reglas R1-R14, la métrica v1.6, o el patrón de sensores
 de autonomía acotada) aparece en tu propio artículo, charla o producto, un
 link de vuelta acá se agradece — es lo único que mantiene la conexión con
 el origen:
