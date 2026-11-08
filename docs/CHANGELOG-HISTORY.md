@@ -6,12 +6,14 @@
 > The template in [`prompts/motor-evolutivo-template.md`](../prompts/motor-evolutivo-template.md)
 > ships clean at v1.0 so you start your own history.
 >
-> **37 approved prompt mutations between 2026-06-10 and 2026-10-21.** Two extra entries
+> **38 approved prompt mutations between 2026-06-10 and 2026-11-08.** Two extra entries
 > (v1.1, v1.2.1) are infrastructure/process changes that did not touch the master prompt —
 > listed for completeness, not counted.
 
 ---
 
+- **v3.20 — approved 2026-11-08:** **log entries keyed by date + time + context, no sequence number.** Header `## YYYY-MM-DD HH:MM · <context> — …`; the numbered series are frozen as history; the pre-flight script prints the header ready to use and flags the same minute + context written twice. Same pass: the "prompt changed today" check stopped trusting mtime alone and requires a real git diff.
+  Why: with one git worktree per session, each copy derived the next number from its own file and two parallel sessions took the same one (14 duplicates in one log); and a fresh checkout stamps every file with today's date, so the "changed today" alarm fired on every session and was teaching everyone to ignore it. Both fixes shipped with a test that was seen failing without them. Infrastructure, not a rule: the template is unchanged.
 - **v3.19 — approved 2026-10-21:** **check before proposing, and log every proposal (pre-proposal check + register).** A small script (`check` / `register` / `status` / `summary`) crosses each play against open tickets, the last 72 h of commits, the log and earlier proposals before the play is published, and Effectiveness is computed over ALL registered proposals, not only the ones the human answered.
   Why: plays kept repeating work that was already done, and a proposal nobody answered cost nothing, so the metric looked better than the behavior. Attribution: two of the three improvements came from an independent reviewer model that saw the same data. One-case hypothesis: it is not propagated to other engines until it catches something real.
 - **v3.18 — approved 2026-10-20:** **autonomy by default and a council with a second model.** With 2+ open decisions of its own, the agent consults a second model by itself (opinion only, facts pasted in), decides the reversible part with it and leaves the record in the tickets. The hand brake is not delegated, and asking the human is the last resort, as a single question with a recommendation.
